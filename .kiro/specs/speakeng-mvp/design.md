@@ -1025,3 +1025,107 @@ dependencies:
 *For any* TTS/STT request, nếu offlineEnabled == true VÀ models đã downloaded, hệ thống SHALL route đến on-device engine. Ngược lại SHALL route đến online (ElevenLabs→OpenAI fallback).
 
 **Validates: Requirements 16.3, 16.4, 16.5**
+
+
+---
+
+## Offline Pronunciation Scoring (wav2vec2 Forced Alignment)
+
+### How It Works
+
+```
+User records audio → wav2vec2 forced alignment với reference text
+  → Confidence score per word (0–100)
+  → Color-coded display (same UI as Azure, nhưng word-level only)
+```
+
+Khác với Azure (phoneme-level), offline mode chỉ cho word-level scoring.
+User được thông báo rõ: "Offline mode — word-level feedback".
+
+### wav2vec2 Model Selection (adaptive)
+
+```dart
+/// Thêm vào model registry
+const pronunciationModels = {
+  DeviceTier.lowEnd: OfflineModelConfig(
+    name: 'wav2vec2-base',
+    url: 'https://huggingface.co/darjusul/wav2vec2-ONNX-collection/...',
+    sizeMB: 360,
+  ),
+  DeviceTier.midRange: OfflineModelConfig(
+    name: 'wav2vec2-large',
+    url: 'https://huggingface.co/darjusul/wav2vec2-ONNX-collection/...',
+    sizeMB: 1200,
+  ),
+  DeviceTier.highEnd: OfflineModelConfig(
+    name: 'wav2vec2-large',
+    url: 'https://huggingface.co/darjusul/wav2vec2-ONNX-collection/...',
+    sizeMB: 1200,
+  ),
+};
+```
+
+### OfflinePronunciationService
+
+```dart
+/// lib/shared/services/offline_pronunciation_service.dart
+class OfflinePronunciationService {
+  /// Forced alignment: audio + reference text → word-level scores.
+  ///
+  /// Returns PronunciationResult with word scores (no phoneme detail).
+  Future<PronunciationResult> assess({
+    required Uint8List audio,
+    required String referenceText,
+  }) async {
+    // 1. Run wav2vec2 forced alignment via ONNX Runtime
+    // 2. Get confidence per word
+    // 3. Map to PronunciationResult (phonemes list empty)
+    final wordScores = await _runForcedAlignment(audio, referenceText);
+
+    final words = wordScores.map((ws) => WordResult(
+      word: ws.word,
+      accuracyScore: ws.confidence * 100,
+      errorType: ws.confidence < 0.5 ? 'Mispronunciation' : null,
+      phonemes: [], // No phoneme detail in offline mode
+    )).toList();
+
+    final avgAccuracy = words.isEmpty ? 0.0
+        : words.map((w) => w.accuracyScore).reduce((a, b) => a + b) / words.length;
+
+    return PronunciationResult(
+      accuracyScore: avgAccuracy,
+      fluencyScore: avgAccuracy, // Approximate
+      completenessScore: _calculateCompleteness(referenceText, words),
+      words: words,
+    );
+  }
+}
+```
+
+### Pronunciation Service Router (updated)
+
+```dart
+/// Extends VoiceServiceRouter to include pronunciation routing
+class PronunciationServiceRouter {
+  final bool offlineEnabled;
+  final OfflinePronunciationService? _offlineService;
+  final ShadowingRepository _onlineService; // Azure via Edge Function
+
+  Future<PronunciationResult> assess({
+    required String audioPath,
+    required String referenceText,
+  }) async {
+    if (offlineEnabled && _offlineService != null) {
+      final audio = await File(audioPath).readAsBytes();
+      return _offlineService!.assess(audio: audio, referenceText: referenceText);
+    }
+    return _onlineService.pronounce(audioPath: audioPath, referenceText: referenceText);
+  }
+}
+```
+
+### Correctness Property 16: Offline pronunciation word scoring
+
+*For any* audio + reference text khi offline mode bật, hệ thống SHALL trả về confidence score (0–100) cho mỗi word trong reference text. Words không detected trong audio SHALL có score = 0.
+
+**Validates: Requirements 18.2, 18.3, 18.7**

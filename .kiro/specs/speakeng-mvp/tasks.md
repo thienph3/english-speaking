@@ -375,3 +375,29 @@ Triển khai ứng dụng SpeakEng MVP theo cấu trúc 4 tuần: Week 1 (nền 
     - Không block UI — download ở background
     - Hiển thị subtle indicator trên home screen khi đang download
     - _Requirements: 17.5_
+
+
+  - [ ] 9.10 Implement OfflinePronunciationService (wav2vec2 forced alignment)
+    - Tạo `lib/shared/services/offline_pronunciation_service.dart`
+    - Load wav2vec2 ONNX model via ONNX Runtime
+    - Implement forced alignment: audio + reference text → confidence per word
+    - Return PronunciationResult (word-level only, phonemes = empty)
+    - _Requirements: 18.1, 18.2, 18.7_
+
+  - [ ] 9.11 Implement PronunciationServiceRouter
+    - Tạo `lib/shared/services/pronunciation_service_router.dart`
+    - Route: offline enabled → wav2vec2 word-level, offline disabled → Azure phoneme-level
+    - Cập nhật ShadowingProvider để dùng router thay vì gọi trực tiếp ShadowingRepository
+    - _Requirements: 18.1, 18.3_
+
+  - [ ] 9.12 Update Shadowing UI cho offline mode indicator
+    - Hiển thị badge "Offline (word-level)" hoặc "Online (phoneme-level)" trên ShadowingScreen
+    - Khi offline: ẩn phoneme detail bottom sheet (tap word chỉ hiển thị score, không có tips)
+    - _Requirements: 18.4, 18.5_
+
+  - [ ] 9.13 Cập nhật Model Registry thêm wav2vec2
+    - Thêm wav2vec2-base (~360MB) cho low-end devices
+    - Thêm wav2vec2-large (~1.2GB) cho mid/high-end devices
+    - Cập nhật ModelDownloadRepository để download thêm pronunciation model
+    - Cập nhật Settings screen hiển thị 3 models: TTS + STT + Pronunciation
+    - _Requirements: 18.6, 17.3, 17.4_

@@ -232,3 +232,18 @@ SpeakEng MVP là ứng dụng Flutter (Android) giúp người Việt luyện ph
 7. THE Model_Manager SHALL lưu models vào internal storage của App (không xóa khi clear cache).
 8. IF download bị gián đoạn (mất mạng, user cancel), THEN THE Model_Manager SHALL hỗ trợ resume download từ vị trí đã dừng.
 9. THE Model_Manager SHALL kiểm tra integrity của model files sau khi download (checksum verification).
+
+
+### Requirement 18: Offline Pronunciation Scoring (Word-Level)
+
+**User Story:** Là một User đã bật Offline_Engine, tôi muốn vẫn nhận được feedback phát âm ở word-level khi luyện shadowing, để không phụ thuộc hoàn toàn vào Azure online.
+
+#### Acceptance Criteria
+
+1. WHEN User bật Offline_Engine VÀ Model_Manager đã download wav2vec2 model, THE Shadowing_Module SHALL sử dụng wav2vec2 forced alignment để chấm điểm phát âm ở word-level thay vì Azure.
+2. THE Offline_Engine SHALL thực hiện forced alignment giữa audio user và reference text, trả về confidence score (0–100) cho mỗi word.
+3. THE Shadowing_Module SHALL hiển thị kết quả word-level offline với cùng UI color-coded (xanh ≥80%, vàng 50–79%, đỏ <50%) như khi dùng Azure online.
+4. WHEN Offline_Engine bật, THE Shadowing_Module SHALL KHÔNG hiển thị phoneme-level detail và Vietnamese tips (chỉ có khi dùng Azure online).
+5. THE App SHALL hiển thị indicator rõ ràng cho User biết đang dùng "Offline mode (word-level)" hay "Online mode (phoneme-level)" trên màn hình shadowing.
+6. WHEN device là low-end (≤4GB RAM), THE Model_Manager SHALL chọn wav2vec2-base (~360MB). WHEN device là mid-range/high-end, THE Model_Manager SHALL chọn wav2vec2-large (~1.2GB) nếu storage đủ, ngược lại fallback về wav2vec2-base.
+7. THE Offline_Engine SHALL tính overall accuracy score = trung bình confidence scores của tất cả words.
