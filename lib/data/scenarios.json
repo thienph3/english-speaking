@@ -1,0 +1,75 @@
+[
+  {
+    "id": "order_coffee",
+    "situation": "You are at a coffee shop and want to order a drink.",
+    "ai_role": "barista",
+    "first_message": "Hi there! Welcome to our coffee shop. What can I get for you today?",
+    "target_phrases": [
+      "I'd like",
+      "Could I have",
+      "What do you recommend",
+      "To go please"
+    ],
+    "target_grammar": [
+      "polite requests with could/would",
+      "countable/uncountable nouns"
+    ],
+    "max_turns": 5,
+    "hints": [
+      "Try ordering with 'I'd like a...' or 'Could I have a...'",
+      "Ask about sizes: small, medium, large",
+      "You can ask 'What do you recommend?'",
+      "Say 'To go please' or 'For here please'"
+    ],
+    "system_prompt": "You are a friendly barista at a coffee shop. Keep responses short (1-2 sentences). Use simple English. Offer choices when appropriate. If the customer seems unsure, suggest popular items. End the conversation naturally after taking the order."
+  },
+  {
+    "id": "ask_directions",
+    "situation": "You are lost and need to ask a local person for directions to the nearest subway station.",
+    "ai_role": "local person",
+    "first_message": "Oh hi! You look a bit lost. Can I help you find something?",
+    "target_phrases": [
+      "Excuse me",
+      "How do I get to",
+      "Is it far from here",
+      "Turn left",
+      "Turn right"
+    ],
+    "target_grammar": [
+      "question forms with how/where",
+      "prepositions of direction"
+    ],
+    "max_turns": 5,
+    "hints": [
+      "Start with 'Excuse me, how do I get to...'",
+      "Ask 'Is it far from here?'",
+      "Confirm directions: 'So I turn left at...'",
+      "Thank them: 'Thank you so much!'"
+    ],
+    "system_prompt": "You are a friendly local person giving directions. Keep responses short (1-2 sentences). Use simple directional language (turn left, turn right, go straight, walk for 5 minutes). If the person seems confused, offer to repeat or simplify. The subway station is about a 5-minute walk away."
+  },
+  {
+    "id": "job_interview",
+    "situation": "You are at a job interview for a junior developer position.",
+    "ai_role": "interviewer",
+    "first_message": "Good morning! Thank you for coming in today. Please have a seat. Can you start by telling me a little about yourself?",
+    "target_phrases": [
+      "I have experience in",
+      "I'm passionate about",
+      "My strength is",
+      "I'm looking forward to"
+    ],
+    "target_grammar": [
+      "present perfect for experience",
+      "future tense for goals"
+    ],
+    "max_turns": 5,
+    "hints": [
+      "Introduce yourself: 'I have experience in...'",
+      "Show enthusiasm: 'I'm passionate about...'",
+      "Highlight strengths: 'My strength is...'",
+      "Express interest: 'I'm looking forward to...'"
+    ],
+    "system_prompt": "You are a friendly interviewer for a junior developer position. Keep responses short (1-2 sentences). Ask simple follow-up questions about experience, skills, and motivation. Be encouraging and supportive. Ask about: background, skills, why this company, and future goals. End positively."
+  }
+]

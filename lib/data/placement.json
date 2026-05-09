@@ -1,0 +1,17 @@
+[
+  {
+    "id": "placement_easy",
+    "text": "I want some water, please.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "placement_medium",
+    "text": "Could you tell me where the nearest station is?",
+    "difficulty": "medium"
+  },
+  {
+    "id": "placement_hard",
+    "text": "I'd appreciate it if you could reschedule the meeting to Thursday.",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,802 @@
+[
+  {
+    "id": "ordering_food_001",
+    "text": "I'd like a latte, please.",
+    "situation": "ordering_food",
+    "phrases": ["I'd like", "a latte", "please"],
+    "target_grammar": "would like + noun",
+    "difficulty": "easy"
+  },
+  {
+    "id": "ordering_food_002",
+    "text": "Can I get a glass of water?",
+    "situation": "ordering_food",
+    "phrases": ["Can I get", "a glass of", "water"],
+    "target_grammar": "Can I + verb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "ordering_food_003",
+    "text": "I'll have the chicken sandwich.",
+    "situation": "ordering_food",
+    "phrases": ["I'll have", "the chicken", "sandwich"],
+    "target_grammar": "will + have + noun",
+    "difficulty": "easy"
+  },
+  {
+    "id": "ordering_food_004",
+    "text": "Could I see the menu, please?",
+    "situation": "ordering_food",
+    "phrases": ["Could I see", "the menu", "please"],
+    "target_grammar": "Could I + verb",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ordering_food_005",
+    "text": "Do you have any vegetarian options?",
+    "situation": "ordering_food",
+    "phrases": ["Do you have", "any vegetarian", "options"],
+    "target_grammar": "Do you have + noun",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ordering_food_006",
+    "text": "I'm allergic to nuts, so could you check the ingredients?",
+    "situation": "ordering_food",
+    "phrases": ["I'm allergic to nuts", "so could you", "check the ingredients"],
+    "target_grammar": "be allergic to + noun, could you + verb",
+    "difficulty": "hard"
+  },
+  {
+    "id": "ordering_food_007",
+    "text": "What would you recommend for someone who doesn't eat spicy food?",
+    "situation": "ordering_food",
+    "phrases": ["What would you recommend", "for someone who", "doesn't eat spicy food"],
+    "target_grammar": "What would you recommend + for clause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "ordering_food_008",
+    "text": "Could we get the bill when you have a moment?",
+    "situation": "ordering_food",
+    "phrases": ["Could we get", "the bill", "when you have a moment"],
+    "target_grammar": "Could we + verb + time clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ordering_food_009",
+    "text": "I'd like to order the set lunch, please.",
+    "situation": "ordering_food",
+    "phrases": ["I'd like to order", "the set lunch", "please"],
+    "target_grammar": "would like to + verb + noun",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ordering_food_010",
+    "text": "Excuse me, is this dish suitable for someone with a dairy allergy?",
+    "situation": "ordering_food",
+    "phrases": ["Excuse me", "is this dish suitable", "for someone with a dairy allergy"],
+    "target_grammar": "is + noun + suitable for + noun phrase",
+    "difficulty": "hard"
+  },
+  {
+    "id": "small_talk_001",
+    "text": "Hi, how are you doing today?",
+    "situation": "small_talk",
+    "phrases": ["Hi", "how are you", "doing today"],
+    "target_grammar": "How are you + verb-ing",
+    "difficulty": "easy"
+  },
+  {
+    "id": "small_talk_002",
+    "text": "The weather is really nice today.",
+    "situation": "small_talk",
+    "phrases": ["The weather", "is really nice", "today"],
+    "target_grammar": "noun + be + adjective",
+    "difficulty": "easy"
+  },
+  {
+    "id": "small_talk_003",
+    "text": "Did you have a good weekend?",
+    "situation": "small_talk",
+    "phrases": ["Did you have", "a good", "weekend"],
+    "target_grammar": "Did you + verb + noun",
+    "difficulty": "easy"
+  },
+  {
+    "id": "small_talk_004",
+    "text": "I've been meaning to ask you about that new restaurant.",
+    "situation": "small_talk",
+    "phrases": ["I've been meaning", "to ask you", "about that new restaurant"],
+    "target_grammar": "present perfect continuous + to-infinitive",
+    "difficulty": "medium"
+  },
+  {
+    "id": "small_talk_005",
+    "text": "Have you seen any good movies lately?",
+    "situation": "small_talk",
+    "phrases": ["Have you seen", "any good movies", "lately"],
+    "target_grammar": "present perfect + adverb",
+    "difficulty": "medium"
+  },
+  {
+    "id": "small_talk_006",
+    "text": "I heard you just got back from vacation. How was it?",
+    "situation": "small_talk",
+    "phrases": ["I heard you", "just got back from vacation", "How was it"],
+    "target_grammar": "heard + clause, past simple question",
+    "difficulty": "medium"
+  },
+  {
+    "id": "small_talk_007",
+    "text": "It's been a while since we last caught up, hasn't it?",
+    "situation": "small_talk",
+    "phrases": ["It's been a while", "since we last caught up", "hasn't it"],
+    "target_grammar": "It's been + time + since clause + tag question",
+    "difficulty": "hard"
+  },
+  {
+    "id": "small_talk_008",
+    "text": "I'm thinking of taking up a new hobby. Any suggestions?",
+    "situation": "small_talk",
+    "phrases": ["I'm thinking of", "taking up a new hobby", "Any suggestions"],
+    "target_grammar": "be thinking of + verb-ing",
+    "difficulty": "medium"
+  },
+  {
+    "id": "small_talk_009",
+    "text": "If you ever need help with anything, don't hesitate to ask.",
+    "situation": "small_talk",
+    "phrases": ["If you ever need help", "with anything", "don't hesitate to ask"],
+    "target_grammar": "If clause + imperative",
+    "difficulty": "hard"
+  },
+  {
+    "id": "small_talk_010",
+    "text": "I couldn't agree more. That's exactly what I was thinking.",
+    "situation": "small_talk",
+    "phrases": ["I couldn't agree more", "That's exactly", "what I was thinking"],
+    "target_grammar": "couldn't + verb + more, past continuous",
+    "difficulty": "hard"
+  },
+  {
+    "id": "asking_directions_001",
+    "text": "Excuse me, how do I get to the train station?",
+    "situation": "asking_directions",
+    "phrases": ["Excuse me", "how do I get", "to the train station"],
+    "target_grammar": "How do I + verb + to place",
+    "difficulty": "easy"
+  },
+  {
+    "id": "asking_directions_002",
+    "text": "Is there a pharmacy nearby?",
+    "situation": "asking_directions",
+    "phrases": ["Is there", "a pharmacy", "nearby"],
+    "target_grammar": "Is there + noun + location",
+    "difficulty": "easy"
+  },
+  {
+    "id": "asking_directions_003",
+    "text": "Can you tell me where the nearest bus stop is?",
+    "situation": "asking_directions",
+    "phrases": ["Can you tell me", "where the nearest", "bus stop is"],
+    "target_grammar": "Can you tell me + embedded question",
+    "difficulty": "medium"
+  },
+  {
+    "id": "asking_directions_004",
+    "text": "How long does it take to walk there?",
+    "situation": "asking_directions",
+    "phrases": ["How long", "does it take", "to walk there"],
+    "target_grammar": "How long does it take + to-infinitive",
+    "difficulty": "medium"
+  },
+  {
+    "id": "asking_directions_005",
+    "text": "Turn left at the traffic light and go straight.",
+    "situation": "asking_directions",
+    "phrases": ["Turn left", "at the traffic light", "and go straight"],
+    "target_grammar": "imperative + preposition of place",
+    "difficulty": "easy"
+  },
+  {
+    "id": "asking_directions_006",
+    "text": "Could you show me on the map where we are right now?",
+    "situation": "asking_directions",
+    "phrases": ["Could you show me", "on the map", "where we are right now"],
+    "target_grammar": "Could you + verb + embedded question",
+    "difficulty": "hard"
+  },
+  {
+    "id": "asking_directions_007",
+    "text": "I think I'm lost. I was looking for the museum.",
+    "situation": "asking_directions",
+    "phrases": ["I think I'm lost", "I was looking for", "the museum"],
+    "target_grammar": "think + clause, past continuous",
+    "difficulty": "medium"
+  },
+  {
+    "id": "asking_directions_008",
+    "text": "Is it faster to take the subway or the bus?",
+    "situation": "asking_directions",
+    "phrases": ["Is it faster", "to take the subway", "or the bus"],
+    "target_grammar": "comparative + to-infinitive + or",
+    "difficulty": "medium"
+  },
+  {
+    "id": "asking_directions_009",
+    "text": "Would you mind pointing me in the right direction?",
+    "situation": "asking_directions",
+    "phrases": ["Would you mind", "pointing me", "in the right direction"],
+    "target_grammar": "Would you mind + verb-ing",
+    "difficulty": "hard"
+  },
+  {
+    "id": "asking_directions_010",
+    "text": "If I remember correctly, it should be just around the corner.",
+    "situation": "asking_directions",
+    "phrases": ["If I remember correctly", "it should be", "just around the corner"],
+    "target_grammar": "If clause + should + preposition phrase",
+    "difficulty": "hard"
+  },
+  {
+    "id": "shopping_001",
+    "text": "How much does this cost?",
+    "situation": "shopping",
+    "phrases": ["How much", "does this", "cost"],
+    "target_grammar": "How much + does + noun + verb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "shopping_002",
+    "text": "Do you have this in a smaller size?",
+    "situation": "shopping",
+    "phrases": ["Do you have", "this in", "a smaller size"],
+    "target_grammar": "Do you have + noun + in + adjective",
+    "difficulty": "easy"
+  },
+  {
+    "id": "shopping_003",
+    "text": "I'm just looking, thank you.",
+    "situation": "shopping",
+    "phrases": ["I'm just", "looking", "thank you"],
+    "target_grammar": "be + just + verb-ing",
+    "difficulty": "easy"
+  },
+  {
+    "id": "shopping_004",
+    "text": "Can I try this on in the fitting room?",
+    "situation": "shopping",
+    "phrases": ["Can I try", "this on", "in the fitting room"],
+    "target_grammar": "Can I + phrasal verb + location",
+    "difficulty": "medium"
+  },
+  {
+    "id": "shopping_005",
+    "text": "Do you accept credit cards or only cash?",
+    "situation": "shopping",
+    "phrases": ["Do you accept", "credit cards", "or only cash"],
+    "target_grammar": "Do you + verb + noun + or + noun",
+    "difficulty": "medium"
+  },
+  {
+    "id": "shopping_006",
+    "text": "I'd like to return this because it doesn't fit properly.",
+    "situation": "shopping",
+    "phrases": ["I'd like to return this", "because it doesn't", "fit properly"],
+    "target_grammar": "would like to + verb + because clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "shopping_007",
+    "text": "Is there a discount if I buy two of these?",
+    "situation": "shopping",
+    "phrases": ["Is there a discount", "if I buy", "two of these"],
+    "target_grammar": "Is there + noun + if clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "shopping_008",
+    "text": "I've been looking for something like this for a long time.",
+    "situation": "shopping",
+    "phrases": ["I've been looking for", "something like this", "for a long time"],
+    "target_grammar": "present perfect continuous + for + time",
+    "difficulty": "hard"
+  },
+  {
+    "id": "shopping_009",
+    "text": "Would it be possible to get a refund instead of an exchange?",
+    "situation": "shopping",
+    "phrases": ["Would it be possible", "to get a refund", "instead of an exchange"],
+    "target_grammar": "Would it be possible + to-infinitive + instead of",
+    "difficulty": "hard"
+  },
+  {
+    "id": "shopping_010",
+    "text": "I was wondering if you could recommend something for a birthday gift.",
+    "situation": "shopping",
+    "phrases": ["I was wondering", "if you could recommend", "something for a birthday gift"],
+    "target_grammar": "was wondering + if clause + for purpose",
+    "difficulty": "hard"
+  },
+  {
+    "id": "phone_call_001",
+    "text": "Hello, may I speak to Mr. Johnson, please?",
+    "situation": "phone_call",
+    "phrases": ["Hello", "may I speak to", "Mr. Johnson please"],
+    "target_grammar": "may I + verb + to person",
+    "difficulty": "easy"
+  },
+  {
+    "id": "phone_call_002",
+    "text": "I'm calling about the appointment tomorrow.",
+    "situation": "phone_call",
+    "phrases": ["I'm calling", "about the appointment", "tomorrow"],
+    "target_grammar": "be + verb-ing + about + noun",
+    "difficulty": "easy"
+  },
+  {
+    "id": "phone_call_003",
+    "text": "Could you please hold for a moment?",
+    "situation": "phone_call",
+    "phrases": ["Could you", "please hold", "for a moment"],
+    "target_grammar": "Could you + please + verb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "phone_call_004",
+    "text": "I'm sorry, but the line is busy. Can I take a message?",
+    "situation": "phone_call",
+    "phrases": ["I'm sorry but", "the line is busy", "Can I take a message"],
+    "target_grammar": "apology + statement + offer",
+    "difficulty": "medium"
+  },
+  {
+    "id": "phone_call_005",
+    "text": "Would you like me to call you back later?",
+    "situation": "phone_call",
+    "phrases": ["Would you like", "me to call", "you back later"],
+    "target_grammar": "Would you like + object + to-infinitive",
+    "difficulty": "medium"
+  },
+  {
+    "id": "phone_call_006",
+    "text": "I'm afraid she's in a meeting right now.",
+    "situation": "phone_call",
+    "phrases": ["I'm afraid", "she's in a meeting", "right now"],
+    "target_grammar": "I'm afraid + clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "phone_call_007",
+    "text": "Could you spell your last name for me, please?",
+    "situation": "phone_call",
+    "phrases": ["Could you spell", "your last name", "for me please"],
+    "target_grammar": "Could you + verb + noun + for me",
+    "difficulty": "medium"
+  },
+  {
+    "id": "phone_call_008",
+    "text": "I'll make sure to pass along your message as soon as possible.",
+    "situation": "phone_call",
+    "phrases": ["I'll make sure", "to pass along your message", "as soon as possible"],
+    "target_grammar": "will + make sure + to-infinitive + time phrase",
+    "difficulty": "hard"
+  },
+  {
+    "id": "phone_call_009",
+    "text": "I'm returning your call regarding the job application I submitted.",
+    "situation": "phone_call",
+    "phrases": ["I'm returning your call", "regarding the job application", "I submitted"],
+    "target_grammar": "be + verb-ing + regarding + relative clause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "phone_call_010",
+    "text": "Would it be convenient for you if I called back around three o'clock?",
+    "situation": "phone_call",
+    "phrases": ["Would it be convenient", "for you if I called back", "around three o'clock"],
+    "target_grammar": "Would it be + adjective + if clause (subjunctive)",
+    "difficulty": "hard"
+  },
+  {
+    "id": "job_interview_001",
+    "text": "Thank you for giving me this opportunity.",
+    "situation": "job_interview",
+    "phrases": ["Thank you", "for giving me", "this opportunity"],
+    "target_grammar": "Thank you + for + verb-ing",
+    "difficulty": "easy"
+  },
+  {
+    "id": "job_interview_002",
+    "text": "I have three years of experience in marketing.",
+    "situation": "job_interview",
+    "phrases": ["I have", "three years of experience", "in marketing"],
+    "target_grammar": "have + noun phrase + in field",
+    "difficulty": "easy"
+  },
+  {
+    "id": "job_interview_003",
+    "text": "My biggest strength is my ability to work under pressure.",
+    "situation": "job_interview",
+    "phrases": ["My biggest strength", "is my ability", "to work under pressure"],
+    "target_grammar": "possessive + noun + be + to-infinitive",
+    "difficulty": "medium"
+  },
+  {
+    "id": "job_interview_004",
+    "text": "I'm looking for a position where I can grow professionally.",
+    "situation": "job_interview",
+    "phrases": ["I'm looking for", "a position where", "I can grow professionally"],
+    "target_grammar": "be looking for + noun + where clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "job_interview_005",
+    "text": "Could you tell me more about the team I'd be working with?",
+    "situation": "job_interview",
+    "phrases": ["Could you tell me", "more about the team", "I'd be working with"],
+    "target_grammar": "Could you + verb + about + relative clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "job_interview_006",
+    "text": "In my previous role, I managed a team of five people.",
+    "situation": "job_interview",
+    "phrases": ["In my previous role", "I managed", "a team of five people"],
+    "target_grammar": "prepositional phrase + past simple",
+    "difficulty": "medium"
+  },
+  {
+    "id": "job_interview_007",
+    "text": "I believe my experience in project management makes me a strong candidate.",
+    "situation": "job_interview",
+    "phrases": ["I believe", "my experience in project management", "makes me a strong candidate"],
+    "target_grammar": "believe + noun phrase + verb + complement",
+    "difficulty": "hard"
+  },
+  {
+    "id": "job_interview_008",
+    "text": "One challenge I faced was meeting tight deadlines while maintaining quality.",
+    "situation": "job_interview",
+    "phrases": ["One challenge I faced", "was meeting tight deadlines", "while maintaining quality"],
+    "target_grammar": "noun clause + be + verb-ing + while clause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "job_interview_009",
+    "text": "I'm particularly interested in this role because of the company's mission.",
+    "situation": "job_interview",
+    "phrases": ["I'm particularly interested", "in this role", "because of the company's mission"],
+    "target_grammar": "be + adverb + adjective + because of + noun",
+    "difficulty": "easy"
+  },
+  {
+    "id": "job_interview_010",
+    "text": "If given the opportunity, I would bring fresh ideas and a strong work ethic.",
+    "situation": "job_interview",
+    "phrases": ["If given the opportunity", "I would bring", "fresh ideas and a strong work ethic"],
+    "target_grammar": "If + past participle + would + verb + compound noun",
+    "difficulty": "hard"
+  },
+  {
+    "id": "meeting_opinions_001",
+    "text": "I think we should focus on the main issue first.",
+    "situation": "meeting_opinions",
+    "phrases": ["I think", "we should focus on", "the main issue first"],
+    "target_grammar": "I think + should + verb + adverb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "meeting_opinions_002",
+    "text": "That's a good point. I agree with you.",
+    "situation": "meeting_opinions",
+    "phrases": ["That's a good point", "I agree", "with you"],
+    "target_grammar": "That's + noun + agree with",
+    "difficulty": "easy"
+  },
+  {
+    "id": "meeting_opinions_003",
+    "text": "In my opinion, we need more time to prepare.",
+    "situation": "meeting_opinions",
+    "phrases": ["In my opinion", "we need", "more time to prepare"],
+    "target_grammar": "In my opinion + need + to-infinitive",
+    "difficulty": "easy"
+  },
+  {
+    "id": "meeting_opinions_004",
+    "text": "I see your point, but have you considered the budget?",
+    "situation": "meeting_opinions",
+    "phrases": ["I see your point", "but have you considered", "the budget"],
+    "target_grammar": "concession + present perfect question",
+    "difficulty": "medium"
+  },
+  {
+    "id": "meeting_opinions_005",
+    "text": "Could we move on to the next item on the agenda?",
+    "situation": "meeting_opinions",
+    "phrases": ["Could we move on", "to the next item", "on the agenda"],
+    "target_grammar": "Could we + phrasal verb + prepositional phrase",
+    "difficulty": "medium"
+  },
+  {
+    "id": "meeting_opinions_006",
+    "text": "I'd like to suggest an alternative approach to this problem.",
+    "situation": "meeting_opinions",
+    "phrases": ["I'd like to suggest", "an alternative approach", "to this problem"],
+    "target_grammar": "would like to + verb + noun + to noun",
+    "difficulty": "medium"
+  },
+  {
+    "id": "meeting_opinions_007",
+    "text": "Based on the data, it seems like option B would be more effective.",
+    "situation": "meeting_opinions",
+    "phrases": ["Based on the data", "it seems like", "option B would be more effective"],
+    "target_grammar": "Based on + noun + it seems + comparative",
+    "difficulty": "hard"
+  },
+  {
+    "id": "meeting_opinions_008",
+    "text": "Let me summarize what we've discussed so far.",
+    "situation": "meeting_opinions",
+    "phrases": ["Let me summarize", "what we've discussed", "so far"],
+    "target_grammar": "Let me + verb + what clause + adverb",
+    "difficulty": "medium"
+  },
+  {
+    "id": "meeting_opinions_009",
+    "text": "I respectfully disagree because the evidence suggests otherwise.",
+    "situation": "meeting_opinions",
+    "phrases": ["I respectfully disagree", "because the evidence", "suggests otherwise"],
+    "target_grammar": "adverb + verb + because clause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "meeting_opinions_010",
+    "text": "Would anyone like to add anything before we wrap up?",
+    "situation": "meeting_opinions",
+    "phrases": ["Would anyone like", "to add anything", "before we wrap up"],
+    "target_grammar": "Would anyone + to-infinitive + before clause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "airport_hotel_001",
+    "text": "I'd like to check in, please. I have a reservation.",
+    "situation": "airport_hotel",
+    "phrases": ["I'd like to check in", "please", "I have a reservation"],
+    "target_grammar": "would like to + verb + statement",
+    "difficulty": "easy"
+  },
+  {
+    "id": "airport_hotel_002",
+    "text": "Where is the departure gate for flight number 302?",
+    "situation": "airport_hotel",
+    "phrases": ["Where is", "the departure gate", "for flight number 302"],
+    "target_grammar": "Where is + noun + for + noun",
+    "difficulty": "easy"
+  },
+  {
+    "id": "airport_hotel_003",
+    "text": "Could I have a room with a view, please?",
+    "situation": "airport_hotel",
+    "phrases": ["Could I have", "a room", "with a view please"],
+    "target_grammar": "Could I have + noun + with + noun",
+    "difficulty": "easy"
+  },
+  {
+    "id": "airport_hotel_004",
+    "text": "My flight has been delayed. Is there a lounge I can wait in?",
+    "situation": "airport_hotel",
+    "phrases": ["My flight has been delayed", "Is there a lounge", "I can wait in"],
+    "target_grammar": "present perfect passive + Is there + relative clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "airport_hotel_005",
+    "text": "What time is breakfast served in the morning?",
+    "situation": "airport_hotel",
+    "phrases": ["What time is", "breakfast served", "in the morning"],
+    "target_grammar": "What time + passive voice + time phrase",
+    "difficulty": "medium"
+  },
+  {
+    "id": "airport_hotel_006",
+    "text": "I need to change my booking to a later date if possible.",
+    "situation": "airport_hotel",
+    "phrases": ["I need to change", "my booking", "to a later date if possible"],
+    "target_grammar": "need to + verb + noun + if clause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "airport_hotel_007",
+    "text": "Could you arrange a taxi to the airport for six in the morning?",
+    "situation": "airport_hotel",
+    "phrases": ["Could you arrange", "a taxi to the airport", "for six in the morning"],
+    "target_grammar": "Could you + verb + noun + for time",
+    "difficulty": "medium"
+  },
+  {
+    "id": "airport_hotel_008",
+    "text": "I'm afraid there's a problem with the air conditioning in my room.",
+    "situation": "airport_hotel",
+    "phrases": ["I'm afraid", "there's a problem with", "the air conditioning in my room"],
+    "target_grammar": "I'm afraid + there's + noun + prepositional phrase",
+    "difficulty": "hard"
+  },
+  {
+    "id": "airport_hotel_009",
+    "text": "Would it be possible to get a late checkout tomorrow?",
+    "situation": "airport_hotel",
+    "phrases": ["Would it be possible", "to get a late checkout", "tomorrow"],
+    "target_grammar": "Would it be possible + to-infinitive + time",
+    "difficulty": "hard"
+  },
+  {
+    "id": "airport_hotel_010",
+    "text": "I was wondering if you could recommend any local restaurants nearby.",
+    "situation": "airport_hotel",
+    "phrases": ["I was wondering", "if you could recommend", "any local restaurants nearby"],
+    "target_grammar": "was wondering + if clause + noun phrase",
+    "difficulty": "hard"
+  },
+  {
+    "id": "making_friends_001",
+    "text": "Hi, I'm new here. What's your name?",
+    "situation": "making_friends",
+    "phrases": ["Hi", "I'm new here", "What's your name"],
+    "target_grammar": "be + adjective + Wh-question",
+    "difficulty": "easy"
+  },
+  {
+    "id": "making_friends_002",
+    "text": "Nice to meet you! Where are you from?",
+    "situation": "making_friends",
+    "phrases": ["Nice to meet you", "Where are you", "from"],
+    "target_grammar": "Nice to + verb + Wh-question",
+    "difficulty": "easy"
+  },
+  {
+    "id": "making_friends_003",
+    "text": "What do you like to do in your free time?",
+    "situation": "making_friends",
+    "phrases": ["What do you like", "to do", "in your free time"],
+    "target_grammar": "What do you like + to-infinitive + time phrase",
+    "difficulty": "easy"
+  },
+  {
+    "id": "making_friends_004",
+    "text": "We should hang out sometime. Are you free this weekend?",
+    "situation": "making_friends",
+    "phrases": ["We should hang out", "sometime", "Are you free this weekend"],
+    "target_grammar": "should + phrasal verb + question",
+    "difficulty": "medium"
+  },
+  {
+    "id": "making_friends_005",
+    "text": "I really enjoy playing basketball. Do you play any sports?",
+    "situation": "making_friends",
+    "phrases": ["I really enjoy", "playing basketball", "Do you play any sports"],
+    "target_grammar": "enjoy + verb-ing + Do you question",
+    "difficulty": "medium"
+  },
+  {
+    "id": "making_friends_006",
+    "text": "That sounds like a lot of fun. I'd love to join you next time.",
+    "situation": "making_friends",
+    "phrases": ["That sounds like", "a lot of fun", "I'd love to join you next time"],
+    "target_grammar": "sounds like + noun + would love to + verb",
+    "difficulty": "medium"
+  },
+  {
+    "id": "making_friends_007",
+    "text": "I've always wanted to try rock climbing. Have you ever done it?",
+    "situation": "making_friends",
+    "phrases": ["I've always wanted", "to try rock climbing", "Have you ever done it"],
+    "target_grammar": "present perfect + to-infinitive + ever question",
+    "difficulty": "medium"
+  },
+  {
+    "id": "making_friends_008",
+    "text": "It was great talking to you. Let's keep in touch!",
+    "situation": "making_friends",
+    "phrases": ["It was great", "talking to you", "Let's keep in touch"],
+    "target_grammar": "It was + adjective + verb-ing + Let's + phrasal verb",
+    "difficulty": "hard"
+  },
+  {
+    "id": "making_friends_009",
+    "text": "I feel like we have a lot in common. We should definitely meet up again.",
+    "situation": "making_friends",
+    "phrases": ["I feel like", "we have a lot in common", "We should definitely meet up again"],
+    "target_grammar": "feel like + clause + should + adverb + phrasal verb",
+    "difficulty": "hard"
+  },
+  {
+    "id": "making_friends_010",
+    "text": "Would you be interested in joining our book club? We meet every Thursday.",
+    "situation": "making_friends",
+    "phrases": ["Would you be interested", "in joining our book club", "We meet every Thursday"],
+    "target_grammar": "Would you be interested in + verb-ing + present simple",
+    "difficulty": "hard"
+  },
+  {
+    "id": "telling_stories_001",
+    "text": "Let me tell you what happened yesterday.",
+    "situation": "telling_stories",
+    "phrases": ["Let me tell you", "what happened", "yesterday"],
+    "target_grammar": "Let me + verb + what clause",
+    "difficulty": "easy"
+  },
+  {
+    "id": "telling_stories_002",
+    "text": "I was walking home when I saw something strange.",
+    "situation": "telling_stories",
+    "phrases": ["I was walking home", "when I saw", "something strange"],
+    "target_grammar": "past continuous + when + past simple",
+    "difficulty": "easy"
+  },
+  {
+    "id": "telling_stories_003",
+    "text": "You won't believe what happened to me this morning.",
+    "situation": "telling_stories",
+    "phrases": ["You won't believe", "what happened", "to me this morning"],
+    "target_grammar": "won't believe + what clause + time",
+    "difficulty": "easy"
+  },
+  {
+    "id": "telling_stories_004",
+    "text": "So there I was, standing in the rain without an umbrella.",
+    "situation": "telling_stories",
+    "phrases": ["So there I was", "standing in the rain", "without an umbrella"],
+    "target_grammar": "narrative inversion + present participle + without",
+    "difficulty": "medium"
+  },
+  {
+    "id": "telling_stories_005",
+    "text": "The funniest part was when he realized he was at the wrong address.",
+    "situation": "telling_stories",
+    "phrases": ["The funniest part was", "when he realized", "he was at the wrong address"],
+    "target_grammar": "superlative + when clause + past simple",
+    "difficulty": "medium"
+  },
+  {
+    "id": "telling_stories_006",
+    "text": "I had never seen anything like it before in my life.",
+    "situation": "telling_stories",
+    "phrases": ["I had never seen", "anything like it", "before in my life"],
+    "target_grammar": "past perfect + never + time phrase",
+    "difficulty": "medium"
+  },
+  {
+    "id": "telling_stories_007",
+    "text": "After waiting for two hours, we finally got a table at the restaurant.",
+    "situation": "telling_stories",
+    "phrases": ["After waiting for two hours", "we finally got", "a table at the restaurant"],
+    "target_grammar": "After + verb-ing + adverb + past simple",
+    "difficulty": "medium"
+  },
+  {
+    "id": "telling_stories_008",
+    "text": "It turned out that the whole thing was just a misunderstanding.",
+    "situation": "telling_stories",
+    "phrases": ["It turned out", "that the whole thing", "was just a misunderstanding"],
+    "target_grammar": "It turned out + that clause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "telling_stories_009",
+    "text": "If I hadn't left early, I would have missed the entire event.",
+    "situation": "telling_stories",
+    "phrases": ["If I hadn't left early", "I would have missed", "the entire event"],
+    "target_grammar": "third conditional: If + past perfect + would have + past participle",
+    "difficulty": "hard"
+  },
+  {
+    "id": "telling_stories_010",
+    "text": "Looking back on it now, I realize it was one of the best decisions I ever made.",
+    "situation": "telling_stories",
+    "phrases": ["Looking back on it now", "I realize it was", "one of the best decisions I ever made"],
+    "target_grammar": "present participle phrase + realize + superlative + ever",
+    "difficulty": "hard"
+  }
+]
