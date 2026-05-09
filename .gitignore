@@ -75,10 +75,9 @@ supabase/.branches/
 .env.*
 *.env
 
-# Old data files (large, not needed for v2)
-data/libritts_raw/
-data/voices/piper/
-data/voices/shadowing/
+# Legacy data & scripts from v1 (not used in code)
+data/
+scripts/
 
 # Personal session notes
 SESSION_SUMMARY.md
