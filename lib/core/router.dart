@@ -1,0 +1,105 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:speakeng/features/auth/providers/auth_provider.dart';
+import 'package:speakeng/features/auth/screens/auth_screen.dart';
+import 'package:speakeng/features/conversation/screens/conversation_screen.dart';
+import 'package:speakeng/features/conversation/screens/feedback_screen.dart';
+import 'package:speakeng/features/daily_flow/screens/daily_flow_screen.dart';
+import 'package:speakeng/features/placement/screens/placement_screen.dart';
+import 'package:speakeng/features/progress/screens/progress_screen.dart';
+import 'package:speakeng/features/shadowing/screens/shadowing_screen.dart';
+
+/// Provider kiểm tra trạng thái placement của user.
+///
+/// Trả về `true` nếu user đã hoàn thành placement, `false` nếu chưa.
+/// Mặc định `null` khi đang loading.
+final placementCompletedProvider = StateProvider<bool?>((ref) => null);
+
+/// Provider cho GoRouter instance.
+///
+/// Redirect logic:
+/// - Chưa login → /login
+/// - Đã login, chưa placement → /placement
+/// - Đã login, đã placement → / (daily flow)
+final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+  final placementCompleted = ref.watch(placementCompletedProvider);
+
+  return GoRouter(
+    initialLocation: '/',
+    redirect: (context, state) {
+      final isAuthenticated = authState.status == AuthStatus.authenticated;
+      final isOnLogin = state.matchedLocation == '/login';
+      final isOnPlacement = state.matchedLocation == '/placement';
+
+      // Chưa đăng nhập → redirect về /login
+      if (!isAuthenticated && !isOnLogin) {
+        return '/login';
+      }
+
+      // Đã đăng nhập mà đang ở /login → kiểm tra placement
+      if (isAuthenticated && isOnLogin) {
+        if (placementCompleted == false) return '/placement';
+        return '/';
+      }
+
+      // Đã đăng nhập, chưa placement → redirect về /placement
+      if (isAuthenticated && placementCompleted == false && !isOnPlacement) {
+        return '/placement';
+      }
+
+      // Đã placement mà đang ở /placement → redirect về /
+      if (isAuthenticated && placementCompleted == true && isOnPlacement) {
+        return '/';
+      }
+
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const AuthScreen(),
+      ),
+      GoRoute(
+        path: '/placement',
+        builder: (context, state) => const PlacementScreen(),
+      ),
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const DailyFlowScreen(),
+      ),
+      GoRoute(
+        path: '/shadowing/:id',
+        builder: (context, state) => ShadowingScreen(
+          sentenceId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        path: '/conversation/:id',
+        builder: (context, state) {
+          final scenario = state.extra as dynamic;
+          return ConversationScreen(scenario: scenario);
+        },
+      ),
+      GoRoute(
+        path: '/progress',
+        builder: (context, state) => const ProgressScreen(),
+      ),
+      GoRoute(
+        path: '/feedback',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return FeedbackScreen(
+            feedback: extra?['feedback'],
+            targetPhrases: extra?['targetPhrases'] ?? [],
+            userTranscripts: extra?['userTranscripts'] ?? [],
+            responseTimes: extra?['responseTimes'] ?? [],
+            onDone: () => context.go('/'),
+          );
+        },
+      ),
+    ],
+  );
+});

@@ -1,0 +1,50 @@
+name: speakeng
+description: "SpeakEng - Ứng dụng luyện phát âm tiếng Anh cho người Việt"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: 3.3.1
+  riverpod_annotation: 4.0.2
+
+  # Navigation
+  go_router: 14.8.1
+
+  # Backend
+  supabase_flutter: 2.8.4
+
+  # Audio
+  record: 5.2.1
+  just_audio: 0.9.43
+
+  # File system
+  path_provider: 2.1.5
+
+  # Serialization (runtime)
+  freezed_annotation: 3.1.0
+  json_annotation: 4.11.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+  # Code generation
+  freezed: 3.2.5
+  json_serializable: 6.13.0
+  build_runner: 2.15.0
+  riverpod_generator: 4.0.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - lib/data/
