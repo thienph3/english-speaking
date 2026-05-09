@@ -15,6 +15,10 @@ SpeakEng MVP là ứng dụng Flutter (Android) giúp người Việt luyện ph
 - **Placement_Module**: Module kiểm tra trình độ ban đầu gồm 3 câu (easy/medium/hard)
 - **Auth_System**: Hệ thống xác thực người dùng qua Supabase Auth
 - **Edge_Function**: Supabase Edge Function đóng vai trò proxy gọi API bên ngoài (Azure, OpenAI)
+- **Offline_Engine**: Module TTS/STT chạy on-device sử dụng sherpa-onnx (Kokoro TTS + Whisper STT), không cần internet
+- **Model_Manager**: Module quản lý download, lưu trữ, và chọn model offline phù hợp với device
+- **Auth_System**: Hệ thống xác thực người dùng qua Supabase Auth
+- **Edge_Function**: Supabase Edge Function đóng vai trò proxy gọi API bên ngoài (Azure, OpenAI)
 - **Sentence**: Một câu shadowing trong bộ nội dung 100 câu thuộc 10 tình huống
 - **Scenario**: Một kịch bản hội thoại AI với vai trò, target phrases, và target grammar
 - **Mastery**: Trạng thái đạt được khi User phát âm một Sentence với accuracy ≥ 80% ba lần liên tiếp
@@ -199,3 +203,32 @@ SpeakEng MVP là ứng dụng Flutter (Android) giúp người Việt luyện ph
 3. THE App SHALL cung cấp 3 câu placement test với độ khó easy, medium, hard.
 4. THE App SHALL phân loại mỗi Sentence theo difficulty (easy, medium, hard) và situation.
 5. THE App SHALL gắn mỗi Sentence với danh sách phrases và target_grammar.
+
+### Requirement 16: On-Device TTS/STT (Offline Voice Engine)
+
+**User Story:** Là một User, tôi muốn có option sử dụng TTS và STT offline trên device, để tiết kiệm chi phí API và giảm latency khi phát/nhận giọng nói.
+
+#### Acceptance Criteria
+
+1. THE App SHALL cung cấp option bật/tắt Offline_Engine trong màn hình Settings (mặc định: tắt — dùng online ElevenLabs/OpenAI).
+2. THE App SHALL chỉ hiển thị option bật Offline_Engine khi Model_Manager xác nhận models đã được download thành công.
+3. WHEN User bật Offline_Engine, THE Conversation_Module SHALL sử dụng on-device TTS (Kokoro/Piper) thay vì ElevenLabs/OpenAI TTS cho phát giọng AI.
+4. WHEN User bật Offline_Engine, THE Conversation_Module SHALL sử dụng on-device STT (Whisper via sherpa-onnx) thay vì ElevenLabs/OpenAI Whisper cho transcribe giọng User.
+5. WHEN User bật Offline_Engine, THE Pronunciation_Engine (Azure) và GPT-4o-mini SHALL vẫn hoạt động online bình thường — Offline_Engine chỉ thay thế TTS và STT.
+6. THE App SHALL hiển thị trạng thái Offline_Engine trên Settings: "Chưa tải model" / "Đang tải..." / "Sẵn sàng".
+
+### Requirement 17: Adaptive Model Download theo Device
+
+**User Story:** Là một User, tôi muốn App tự chọn model offline phù hợp với thiết bị của tôi, để không bị lag hoặc tốn quá nhiều bộ nhớ.
+
+#### Acceptance Criteria
+
+1. THE Model_Manager SHALL detect thông số device (RAM, CPU cores) khi App khởi động.
+2. THE Model_Manager SHALL phân loại device thành 3 tier: low-end (≤4GB RAM), mid-range (4–8GB), high-end (>8GB).
+3. WHEN device là low-end, THE Model_Manager SHALL chọn Whisper Tiny (~40MB) cho STT và Piper (~30MB) cho TTS.
+4. WHEN device là mid-range hoặc high-end, THE Model_Manager SHALL chọn Whisper Small (~150MB) cho STT và Kokoro (~150MB) cho TTS.
+5. THE Model_Manager SHALL download models ở background sau splash screen, không block UI chính.
+6. THE Model_Manager SHALL hiển thị progress download (% và MB) và cho phép User cancel.
+7. THE Model_Manager SHALL lưu models vào internal storage của App (không xóa khi clear cache).
+8. IF download bị gián đoạn (mất mạng, user cancel), THEN THE Model_Manager SHALL hỗ trợ resume download từ vị trí đã dừng.
+9. THE Model_Manager SHALL kiểm tra integrity của model files sau khi download (checksum verification).
