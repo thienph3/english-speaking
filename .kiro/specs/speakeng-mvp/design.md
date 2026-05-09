@@ -1129,3 +1129,101 @@ class PronunciationServiceRouter {
 *For any* audio + reference text khi offline mode bật, hệ thống SHALL trả về confidence score (0–100) cho mỗi word trong reference text. Words không detected trong audio SHALL có score = 0.
 
 **Validates: Requirements 18.2, 18.3, 18.7**
+
+
+---
+
+## Multi-Provider LLM Fallback Chain
+
+### Architecture
+
+```
+User message → LLMServiceRouter
+  → Check Gemini 3.1 Flash-Lite quota
+    → OK? → Call Gemini 3.1 Flash-Lite (free)
+    → Exceeded? → Check Gemini 2.0 Flash quota
+      → OK? → Call Gemini 2.0 Flash (free, 1500 req/day)
+      → Exceeded? → Call GPT-4.1 nano (paid, $0.10/1M tokens)
+```
+
+### LLM Quota Tracker
+
+```dart
+/// lib/shared/services/llm_quota_tracker.dart
+class LlmQuotaTracker {
+  /// Track daily/monthly usage per provider.
+  /// Stored in Supabase `api_usage` table.
+
+  Future<bool> canUseGeminiFlashLite() async;  // monthly token limit
+  Future<bool> canUseGeminiFlash() async;       // 1500 req/day
+  Future<void> incrementUsage(String provider, int tokens) async;
+}
+```
+
+### LLMServiceRouter
+
+```dart
+/// lib/shared/services/llm_service_router.dart
+enum LlmProvider { geminiFlashLite, geminiFlash, gptNano, offlineLlm }
+
+class LlmServiceRouter {
+  final bool offlineEnabled;
+  final LlmQuotaTracker _quotaTracker;
+  final OnDeviceLlmService? _offlineService;
+
+  /// Route chat request to best available provider.
+  Future<String> chat({
+    required List<Map<String, String>> messages,
+    required String systemPrompt,
+  }) async {
+    if (offlineEnabled && _offlineService != null) {
+      return _offlineService!.generate(messages, systemPrompt);
+    }
+
+    // Online fallback chain
+    if (await _quotaTracker.canUseGeminiFlashLite()) {
+      return _callGeminiFlashLite(messages, systemPrompt);
+    }
+    if (await _quotaTracker.canUseGeminiFlash()) {
+      return _callGeminiFlash(messages, systemPrompt);
+    }
+    return _callGptNano(messages, systemPrompt);
+  }
+}
+```
+
+### On-Device LLM (adaptive per device)
+
+```dart
+/// Model selection per device tier
+const llmModels = {
+  DeviceTier.lowEnd: OfflineModelConfig(
+    name: 'gemma-2b-it',
+    url: 'https://huggingface.co/.../gemma-2b-it-q4.gguf',
+    sizeMB: 1500,
+  ),
+  DeviceTier.midRange: OfflineModelConfig(
+    name: 'phi-3-mini-4k-instruct',
+    url: 'https://huggingface.co/.../phi-3-mini-q4.gguf',
+    sizeMB: 2200,
+  ),
+  DeviceTier.highEnd: OfflineModelConfig(
+    name: 'qwen3-4b-instruct',
+    url: 'https://huggingface.co/.../qwen3-4b-q4.gguf',
+    sizeMB: 2500,
+  ),
+};
+```
+
+### Edge Function /chat (updated)
+
+Edge Function `/chat` cần hỗ trợ multiple providers:
+- Nhận thêm field `provider` trong request body
+- Route đến Gemini API hoặc OpenAI API tùy provider
+- Env vars: `GEMINI_API_KEY`, `OPENAI_API_KEY`
+
+### Correctness Property 17: LLM fallback chain order
+
+*For any* chat request khi online, hệ thống SHALL thử providers theo thứ tự: Gemini 3.1 Flash-Lite → Gemini 2.0 Flash → GPT-4.1 nano. Chỉ chuyển sang provider tiếp theo khi provider hiện tại đạt quota limit.
+
+**Validates: Requirements 19.1, 19.2, 19.3, 19.4**

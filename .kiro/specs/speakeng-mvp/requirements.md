@@ -247,3 +247,30 @@ SpeakEng MVP là ứng dụng Flutter (Android) giúp người Việt luyện ph
 5. THE App SHALL hiển thị indicator rõ ràng cho User biết đang dùng "Offline mode (word-level)" hay "Online mode (phoneme-level)" trên màn hình shadowing.
 6. WHEN device là low-end (≤4GB RAM), THE Model_Manager SHALL chọn wav2vec2-base (~360MB). WHEN device là mid-range/high-end, THE Model_Manager SHALL chọn wav2vec2-large (~1.2GB) nếu storage đủ, ngược lại fallback về wav2vec2-base.
 7. THE Offline_Engine SHALL tính overall accuracy score = trung bình confidence scores của tất cả words.
+
+
+### Requirement 19: Multi-Provider LLM với Fallback Chain (Conversation AI)
+
+**User Story:** Là một User, tôi muốn App tận dụng tối đa free tier của nhiều LLM providers, để giảm chi phí vận hành mà vẫn đảm bảo conversation luôn hoạt động.
+
+#### Acceptance Criteria
+
+1. THE Conversation_Module SHALL sử dụng LLM fallback chain theo thứ tự: Gemini 3.1 Flash-Lite → Gemini 2.0 Flash → GPT-4.1 nano.
+2. THE App SHALL track usage quota cho mỗi provider (requests/ngày hoặc tokens/tháng) và tự động chuyển sang provider tiếp theo khi đạt free plan limit.
+3. WHEN Gemini 3.1 Flash-Lite đạt free plan limit, THE Conversation_Module SHALL tự động fallback sang Gemini 2.0 Flash.
+4. WHEN Gemini 2.0 Flash đạt free plan limit (1500 requests/ngày), THE Conversation_Module SHALL tự động fallback sang GPT-4.1 nano (paid, rẻ nhất).
+5. THE App SHALL ghi log provider nào đang được sử dụng cho mỗi request (cho monitoring).
+6. IF tất cả providers đều fail (network error, rate limit), THEN THE App SHALL hiển thị thông báo lỗi và cho phép retry.
+
+### Requirement 20: On-Device LLM cho Conversation Offline
+
+**User Story:** Là một User đã bật Offline_Engine, tôi muốn có thể luyện hội thoại AI ngay cả khi không có internet, để không bị gián đoạn luyện tập.
+
+#### Acceptance Criteria
+
+1. WHEN User bật Offline_Engine VÀ Model_Manager đã download LLM model, THE Conversation_Module SHALL sử dụng on-device LLM thay vì cloud API.
+2. THE Model_Manager SHALL chọn LLM model phù hợp với device: low-end (≤4GB) → Gemma 2B (~1.5GB), mid-range (4–8GB) → Phi-3 mini 3.8B (~2.2GB), high-end (>8GB) → Qwen3 4B (~2.5GB).
+3. THE App SHALL hiển thị cảnh báo cho User rằng chất lượng conversation offline có thể kém hơn online mode.
+4. WHEN offline LLM bật, THE Conversation_Module SHALL vẫn sử dụng cùng scenario config (system_prompt, target_phrases) như online mode.
+5. THE App SHALL hiển thị indicator "Offline AI" trên ConversationScreen khi đang dùng on-device LLM.
+6. IF on-device LLM response quá chậm (>30 giây), THEN THE App SHALL hiển thị option cho User chuyển sang online mode.

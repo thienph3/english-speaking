@@ -401,3 +401,57 @@ Triển khai ứng dụng SpeakEng MVP theo cấu trúc 4 tuần: Week 1 (nền 
     - Cập nhật ModelDownloadRepository để download thêm pronunciation model
     - Cập nhật Settings screen hiển thị 3 models: TTS + STT + Pronunciation
     - _Requirements: 18.6, 17.3, 17.4_
+
+
+- [ ] 10. Multi-Provider LLM Fallback + Offline LLM
+  - [ ] 10.1 Implement LlmQuotaTracker
+    - Tạo `lib/shared/services/llm_quota_tracker.dart`
+    - Track usage per provider (Gemini Flash-Lite, Gemini Flash, GPT-4.1 nano)
+    - Lưu vào Supabase `api_usage` table (thêm columns cho LLM tracking)
+    - Methods: canUseGeminiFlashLite(), canUseGeminiFlash(), incrementUsage()
+    - _Requirements: 19.2_
+
+  - [ ] 10.2 Implement LlmServiceRouter (online fallback chain)
+    - Tạo `lib/shared/services/llm_service_router.dart`
+    - Fallback chain: Gemini 3.1 Flash-Lite → Gemini 2.0 Flash → GPT-4.1 nano
+    - Check quota trước mỗi request, auto-switch khi exceeded
+    - Log provider used per request
+    - _Requirements: 19.1, 19.3, 19.4, 19.5_
+
+  - [ ] 10.3 Update Edge Function /chat cho multi-provider
+    - Cập nhật `supabase/functions/chat/index.ts`
+    - Nhận field `provider` trong request body ("gemini-flash-lite", "gemini-flash", "gpt-nano")
+    - Route đến Gemini API hoặc OpenAI API tùy provider
+    - Thêm env vars: GEMINI_API_KEY
+    - _Requirements: 19.1_
+
+  - [ ] 10.4 Cập nhật SQL migration cho LLM quota tracking
+    - Thêm columns vào `api_usage`: gemini_flash_lite_tokens, gemini_flash_requests, gpt_nano_tokens
+    - Thêm RPC functions cho increment
+    - _Requirements: 19.2_
+
+  - [ ] 10.5 Implement OnDeviceLlmService
+    - Tạo `lib/shared/services/on_device_llm_service.dart`
+    - Load GGUF model via llama.cpp hoặc MediaPipe LLM Inference API
+    - Method: generate(messages, systemPrompt) → String
+    - Handle timeout (>30s → suggest switch to online)
+    - _Requirements: 20.1, 20.4, 20.6_
+
+  - [ ] 10.6 Cập nhật Model Registry thêm LLM models
+    - Thêm LLM model configs per device tier (gemma-2b, phi-3-mini, qwen3-4b)
+    - Cập nhật ModelDownloadRepository để download LLM model
+    - Cập nhật Settings screen hiển thị LLM model status
+    - _Requirements: 20.2_
+
+  - [ ] 10.7 Integrate LlmServiceRouter vào ConversationProvider
+    - Cập nhật ConversationProvider để dùng LlmServiceRouter thay vì gọi trực tiếp /chat
+    - Khi offline enabled → dùng on-device LLM
+    - Khi online → dùng fallback chain (Gemini → GPT)
+    - Hiển thị indicator "Offline AI" khi dùng local model
+    - _Requirements: 19.1, 20.1, 20.5_
+
+  - [ ] 10.8 Hiển thị cảnh báo chất lượng offline
+    - Khi user bật offline LLM lần đầu → hiển thị dialog cảnh báo chất lượng có thể kém hơn
+    - Hiển thị "Offline AI" badge trên ConversationScreen
+    - Nếu response >30s → hiển thị option chuyển sang online
+    - _Requirements: 20.3, 20.5, 20.6_
