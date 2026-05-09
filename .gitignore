@@ -80,5 +80,8 @@ data/libritts_raw/
 data/voices/piper/
 data/voices/shadowing/
 
+# Personal session notes
+SESSION_SUMMARY.md
+
 # Kiro metadata (keep steering and specs, ignore runtime)
 .kiro/specs/**/.meta.json
