@@ -48,3 +48,4 @@ flutter:
 
   assets:
     - lib/data/
+    - assets/voices/

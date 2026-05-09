@@ -75,9 +75,8 @@ supabase/.branches/
 .env.*
 *.env
 
-# Legacy data & scripts from v1 (not used in code)
-data/
-scripts/
+# Legacy data from v1 (large files, not used in code)
+data/libritts_raw/
 
 # Personal session notes
 SESSION_SUMMARY.md

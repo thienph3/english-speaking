@@ -94,6 +94,14 @@ class AudioService {
     return _player.setUrl(url);
   }
 
+  /// Loads audio from Flutter asset bundle for playback.
+  ///
+  /// [assetPath] — path relative to project root (e.g., "assets/voices/id.mp3").
+  /// Returns the total duration of the audio.
+  Future<Duration?> loadAsset(String assetPath) async {
+    return _player.setAsset(assetPath);
+  }
+
   /// Starts or resumes playback.
   Future<void> play() async {
     await _player.play();

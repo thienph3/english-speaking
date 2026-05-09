@@ -4,38 +4,78 @@ import 'package:speakeng/core/exceptions.dart';
 import 'package:speakeng/features/shadowing/models/sentence.dart';
 import 'package:speakeng/features/shadowing/providers/shadowing_state.dart';
 import 'package:speakeng/features/shadowing/repositories/shadowing_repository.dart';
+import 'package:speakeng/shared/services/audio_service.dart';
 
 /// Provider cho tốc độ phát audio hiện tại (0.7, 1.0, 1.2).
 final playbackSpeedProvider = StateProvider<double>((ref) => 1.0);
 
+/// Provider cho AudioService dùng trong shadowing.
+final shadowingAudioProvider = Provider<AudioService>((ref) {
+  final service = AudioService();
+  ref.onDispose(() => service.dispose());
+  return service;
+});
+
 /// Provider cho [ShadowingNotifier].
 final shadowingProvider =
     StateNotifierProvider<ShadowingNotifier, ShadowingState>((ref) {
-  return ShadowingNotifier(ref.read(shadowingRepositoryProvider));
+  return ShadowingNotifier(
+    ref.read(shadowingRepositoryProvider),
+    ref.read(shadowingAudioProvider),
+  );
 });
 
 /// StateNotifier quản lý flow shadowing:
-/// load câu → play audio → record → gửi → hiển thị kết quả.
+/// load câu → play audio mẫu từ asset → record → gửi → hiển thị kết quả.
+///
+/// Audio mẫu được pre-generate bằng ElevenLabs TTS (scripts/generate_voices.py)
+/// và lưu tại assets/voices/{sentence_id}.mp3.
 ///
 /// TODO(thienph3): khi build daily flow, gọi
 /// SentenceSelector.getAvailableSentences(allSentences, userLevel)
 /// để chỉ phục vụ câu phù hợp với starting_level của user.
 class ShadowingNotifier extends StateNotifier<ShadowingState> {
-  ShadowingNotifier(this._repository)
+  ShadowingNotifier(this._repository, this._audioService)
       : super(const ShadowingState.initial());
 
   final ShadowingRepository _repository;
+  final AudioService _audioService;
 
   /// Load một câu mới để luyện tập.
   void loadSentence(Sentence sentence) {
     state = ShadowingState.loaded(sentence);
   }
 
-  /// Bắt đầu phát audio mẫu.
-  void startPlaying() {
+  /// Bắt đầu phát audio mẫu từ asset file.
+  ///
+  /// Audio file nằm tại assets/voices/{sentence_id}.mp3,
+  /// được pre-generate bởi scripts/generate_voices.py.
+  Future<void> startPlaying() async {
     final sentence = _currentSentence;
     if (sentence == null) return;
+
     state = ShadowingState.playing(sentence);
+
+    final audioPath = sentence.audioAssetPath;
+    if (audioPath == null) {
+      // Không có audio file → quay lại loaded
+      state = ShadowingState.loaded(sentence);
+      return;
+    }
+
+    try {
+      await _audioService.loadAsset(audioPath);
+      await _audioService.play();
+      // Khi audio phát xong → quay lại loaded
+      _audioService.playerStateStream.listen((playerState) {
+        if (playerState.processingState.name == 'completed') {
+          if (mounted) stopPlaying();
+        }
+      });
+    } on Exception {
+      // Nếu lỗi phát audio → quay lại loaded
+      state = ShadowingState.loaded(sentence);
+    }
   }
 
   /// Kết thúc phát audio, quay lại loaded.
