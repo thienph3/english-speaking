@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:speakeng/core/theme.dart';
+import 'package:speakeng/features/conversation/providers/scenario_provider.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_flow_provider.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_flow_state.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_sentences_provider.dart';
@@ -162,7 +163,7 @@ class DailyFlowScreen extends ConsumerWidget {
     return 'Luyện câu ${state.shadowingCompleted + 1}/3';
   }
 
-  void _handleCta(BuildContext context, DailyFlowState state, WidgetRef ref) {
+  Future<void> _handleCta(BuildContext context, DailyFlowState state, WidgetRef ref) async {
     final logger = ref.read(eventLoggerProvider);
     switch (state.nextStep) {
       case DailyFlowStep.shadowing:
@@ -174,7 +175,9 @@ class DailyFlowScreen extends ConsumerWidget {
         final idx = state.shadowingCompleted.clamp(0, sentences.length - 1);
         context.push('/shadowing/${sentences[idx].id}');
       case DailyFlowStep.conversation:
-        context.push('/conversation/daily');
+        final scenario = await ref.read(dailyScenarioProvider.future);
+        if (scenario == null || !context.mounted) return;
+        context.push('/conversation/${scenario.id}', extra: scenario);
       case DailyFlowStep.summary:
         break;
     }
