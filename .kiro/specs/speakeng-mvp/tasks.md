@@ -319,62 +319,16 @@ Triển khai ứng dụng SpeakEng MVP theo cấu trúc 4 tuần: Week 1 (nền 
 
 ## Phase 2: Offline TTS/STT Engine
 
-- [ ] 9. Offline Voice Engine — adaptive model download + on-device TTS/STT
-  - [ ] 9.1 Implement DeviceTierDetector (pure logic)
-    - Tạo `lib/features/settings/logic/device_tier_detector.dart`
-    - Detect RAM via `device_info_plus` → classify lowEnd/midRange/highEnd
-    - _Requirements: 17.1, 17.2_
-
-  - [ ] 9.2 Tạo OfflineModelConfig và model registry
-    - Tạo `lib/features/settings/models/offline_model_config.dart` (@freezed)
-    - Define model URLs, sizes cho mỗi tier (whisper-tiny/small, piper/kokoro)
-    - _Requirements: 17.3, 17.4_
-
-  - [ ] 9.3 Implement ModelDownloadRepository
-    - Tạo `lib/features/settings/repositories/model_download_repository.dart`
-    - Download models via `dio` với progress callback + resume support
-    - Lưu vào app internal storage (getApplicationSupportDirectory)
-    - Checksum verification sau download
-    - _Requirements: 17.5, 17.6, 17.7, 17.8, 17.9_
-
-  - [ ] 9.4 Implement ModelManagerProvider (state management)
-    - Tạo `lib/features/settings/providers/model_manager_state.dart` (@freezed)
-    - Tạo `lib/features/settings/providers/model_manager_provider.dart`
-    - States: notDownloaded, downloading(progress), downloaded, error
-    - Auto-start download sau splash screen (background)
-    - _Requirements: 17.5, 17.6_
-
-  - [ ] 9.5 Implement OfflineVoiceService (sherpa-onnx wrapper)
-    - Tạo `lib/shared/services/offline_voice_service.dart`
-    - Initialize sherpa-onnx với model paths
-    - Methods: synthesize(text) → Uint8List, transcribe(audio) → String
-    - Thêm `sherpa_onnx` dependency vào pubspec.yaml
-    - _Requirements: 16.3, 16.4_
-
-  - [ ] 9.6 Implement VoiceServiceRouter (strategy pattern)
-    - Tạo `lib/shared/services/voice_service_router.dart`
-    - Route TTS/STT calls: offline (sherpa-onnx) hoặc online (Edge Functions)
-    - Dựa trên user setting + model availability
-    - _Requirements: 16.1, 16.3, 16.4, 16.5_
-
-  - [ ] 9.7 Tạo Settings Screen
-    - Tạo `lib/features/settings/screens/settings_screen.dart`
-    - Toggle bật/tắt offline TTS/STT (disabled nếu chưa download)
-    - Hiển thị model download status + progress
-    - Hiển thị device tier detected
-    - Thêm route /settings vào router
-    - _Requirements: 16.1, 16.2, 16.6_
-
-  - [ ] 9.8 Integrate VoiceServiceRouter vào ConversationProvider
-    - Cập nhật ConversationProvider để dùng VoiceServiceRouter thay vì gọi trực tiếp repository
-    - Khi offline enabled → dùng on-device, khi disabled → dùng online (ElevenLabs→OpenAI fallback)
-    - _Requirements: 16.3, 16.4, 16.5_
-
-  - [ ] 9.9 Background model download sau splash screen
-    - Trigger download tự động khi app khởi động (nếu chưa có models)
-    - Không block UI — download ở background
-    - Hiển thị subtle indicator trên home screen khi đang download
-    - _Requirements: 17.5_
+- [x] 9. Offline Voice Engine — adaptive model download + on-device TTS/STT
+  - [x] 9.1 ~~DeviceTierDetector~~ → Simplified: single tier (Piper + Whisper tiny for all devices)
+  - [x] 9.2 ~~OfflineModelConfig~~ → ModelManager in `lib/features/ai_services/services/model_manager.dart`
+  - [x] 9.3 ~~ModelDownloadRepository~~ → ModelManager handles download from HuggingFace with progress
+  - [x] 9.4 ~~ModelManagerProvider~~ → `modelManagerProvider` + `ModelDownloadCard` widget in settings
+  - [x] 9.5 ~~OfflineVoiceService~~ → `SherpaOnnxTtsProvider` + `SherpaOnnxSttProvider` in `providers/offline/`
+  - [x] 9.6 ~~VoiceServiceRouter~~ → `AiOrchestrator` with `FallbackChain` handles all routing
+  - [x] 9.7 ~~Settings Screen~~ → `SettingsScreen` with offline toggle, model download cards, quota usage
+  - [x] 9.8 ~~Integrate into ConversationProvider~~ → Already done via Orchestrator migration
+  - [x] 9.9 ~~Background download~~ → User-initiated via Settings (simpler for MVP)
 
 
   - [ ] 9.10 Implement OfflinePronunciationService (wav2vec2 forced alignment)

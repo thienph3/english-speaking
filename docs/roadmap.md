@@ -213,5 +213,6 @@ Placement scoring: avg ≥ 80% → medium/hard, 50–79% → easy/medium, < 50% 
 | LibriSpeech removed | Audiobook fragments không phù hợp cho conversational shadowing |
 | OpenAI TTS cho conversation runtime | Đã integrate, latency OK cho real-time response |
 | Azure Speech cho pronunciation | Phoneme-level scoring, designed for language learners |
-| No offline mode | Online enables Whisper (95% accuracy) + Azure phoneme scoring |
+| Offline TTS/STT via sherpa_onnx | Piper VITS (~30MB) + Whisper tiny.en (~40MB), fallback khi mất mạng |
+| AI Service Orchestrator | Auto-select online/offline provider, quota tracking, fallback chain |
 | Feature-first architecture | Scale tốt, mỗi feature isolated, dễ maintain |

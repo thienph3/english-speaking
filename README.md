@@ -36,9 +36,11 @@ Done.
 | Frontend | Flutter (Android first, iOS later) |
 | Backend | Supabase (Auth + DB + Storage + Edge Functions) |
 | Pronunciation | Azure Speech Pronunciation Assessment (phoneme-level) |
-| STT | OpenAI Whisper API (conversation transcription) |
-| TTS | OpenAI TTS |
+| STT | OpenAI Whisper API (online) / sherpa_onnx Whisper tiny (offline) |
+| TTS | OpenAI TTS (online) / sherpa_onnx Piper VITS (offline) |
 | AI Conversation | GPT-4o-mini |
+| Offline Engine | sherpa_onnx 1.13.2 (on-device TTS/STT) |
+| State | Riverpod + freezed |
 | Cost (<10 DAU) | ~$16/month |
 
 ## Status
@@ -47,8 +49,13 @@ Done.
 - [x] Technical architecture designed
 - [x] Vocabulary data prepared (2,801 words with IPA + definitions)
 - [x] Shadowing audio classified (483 LibriSpeech sentences)
-- [ ] Write situation-based content (sentences + scenarios)
-- [ ] Build shadowing mode + Azure Pronunciation integration
-- [ ] Build AI conversation mode
-- [ ] Build progress tracking
+- [x] Build shadowing mode + Azure Pronunciation integration
+- [x] Build AI conversation mode (with TTS playback)
+- [x] Build progress tracking (dashboard + before/after player)
+- [x] Build daily flow (sentence selection + persistence)
+- [x] AI Service Orchestrator (online/offline fallback, quota tracking)
+- [x] Offline TTS/STT (sherpa_onnx + model download UI)
+- [ ] Setup accounts (Supabase, Azure, OpenAI, ElevenLabs)
+- [ ] Generate voice files (ElevenLabs TTS for shadowing)
+- [ ] Deploy Edge Functions + run migrations
 - [ ] Beta testing (50 users)
