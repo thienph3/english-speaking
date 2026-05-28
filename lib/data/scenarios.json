@@ -108,5 +108,61 @@
     "max_turns": 5,
     "hints": ["Start: 'First, I woke up at...'", "Sequence: 'After that, I went to...'", "Evening: 'In the evening, I...'", "React: 'It was really fun/tiring/interesting'"],
     "system_prompt": "You are a friendly English tutor. Keep responses short (1-2 sentences). Ask follow-up questions about their day to keep them talking. Show interest with reactions like 'That sounds nice!' or 'Oh really?'. Gently encourage more detail. Focus on getting them to use past tense and sequencing words."
+  },
+  {
+    "id": "tradeshow_booth_visit",
+    "situation": "You are at NRF Retail's Big Show APAC in Singapore and want to learn about a company's retail solution at their booth.",
+    "ai_role": "booth exhibitor",
+    "first_message": "Hey, welcome to our booth! Have you heard about our retail analytics platform before?",
+    "target_phrases": ["I'm interested in", "Could you tell me more about", "How does it work", "Do you have a demo"],
+    "target_grammar": ["polite questions with could", "present simple for product features"],
+    "max_turns": 5,
+    "hints": ["Start: 'I'm interested in your solution for...'", "Ask details: 'Could you tell me more about how it works?'", "Ask for demo: 'Do you have a demo I can see?'", "Exchange info: 'Can I leave you my business card?'"],
+    "system_prompt": "You are a friendly exhibitor at NRF Retail's Big Show APAC in Singapore. You sell a retail analytics platform that helps stores track customer behavior. Keep responses short (1-2 sentences). Explain features simply. Offer a demo. Ask what kind of retail business they're in. Be enthusiastic but not pushy."
+  },
+  {
+    "id": "tradeshow_networking",
+    "situation": "You are at the NRF APAC networking reception and want to introduce yourself to other retail professionals.",
+    "ai_role": "retail professional",
+    "first_message": "Hi there! Great event, isn't it? I'm David from a department store chain in Australia. What brings you here?",
+    "target_phrases": ["I work in", "We're looking for", "What's your experience with", "Let's keep in touch"],
+    "target_grammar": ["present simple for work description", "present continuous for current projects"],
+    "max_turns": 5,
+    "hints": ["Introduce: 'I work in retail technology in Vietnam'", "Explain purpose: 'We're looking for new solutions to...'", "Ask them: 'What's your experience with omnichannel?'", "Close: 'Let's keep in touch! Here's my card'"],
+    "system_prompt": "You are David, a retail operations director from an Australian department store chain attending NRF APAC in Singapore. Keep responses short (1-2 sentences). Share challenges about omnichannel retail. Ask about their business and what solutions they're exploring. Be genuinely interested. Suggest connecting on LinkedIn at the end."
+  },
+  {
+    "id": "tradeshow_presentation_qa",
+    "situation": "You just watched a keynote presentation at NRF APAC and want to ask the speaker a question during Q&A.",
+    "ai_role": "keynote speaker",
+    "first_message": "Thank you for that question! Could you tell me a bit more about what specific challenge you're facing?",
+    "target_phrases": ["In our experience", "The main challenge is", "How would you suggest", "That's very helpful"],
+    "target_grammar": ["conditional would for suggestions", "present perfect for experience"],
+    "max_turns": 5,
+    "hints": ["Give context: 'In our experience, the main challenge is...'", "Be specific: 'We have about 50 stores and...'", "Ask for advice: 'How would you suggest we approach...'", "Thank: 'That's very helpful, thank you!'"],
+    "system_prompt": "You are a keynote speaker at NRF APAC who just presented about AI in retail personalization. Keep responses short (1-2 sentences). Answer their question helpfully with practical advice. Ask clarifying questions about their business size and current tech stack. Be encouraging about their challenges."
+  },
+  {
+    "id": "tradeshow_lunch",
+    "situation": "You are at a lunch table at NRF APAC and start a conversation with the person sitting next to you.",
+    "ai_role": "fellow attendee",
+    "first_message": "Mind if I sit here? These conferences are so packed! I'm Lisa from a fashion brand in Japan. First time at NRF APAC?",
+    "target_phrases": ["This is my first time", "I'm here to learn about", "What sessions do you recommend", "It was great talking to you"],
+    "target_grammar": ["present perfect for experience", "infinitive of purpose (to learn, to find)"],
+    "max_turns": 5,
+    "hints": ["Answer: 'This is my first time! I'm here to learn about...'", "Ask: 'What sessions do you recommend?'", "Share: 'I'm most interested in...'", "End: 'It was great talking to you!'"],
+    "system_prompt": "You are Lisa, a digital marketing manager from a Japanese fashion brand attending NRF APAC. Keep responses short (1-2 sentences). Share which sessions you enjoyed (the AI personalization talk was great). Ask about their role and what they hope to learn. Be friendly and casual. Suggest grabbing coffee later."
+  },
+  {
+    "id": "tradeshow_partnership",
+    "situation": "You want to discuss a potential partnership with a company you met at NRF APAC.",
+    "ai_role": "potential partner",
+    "first_message": "Thanks for setting up this meeting! I really liked what you shared at the booth earlier. So, how do you think we could work together?",
+    "target_phrases": ["We could collaborate on", "Our strength is", "Would you be open to", "Let me send you a proposal"],
+    "target_grammar": ["could for possibilities", "would for polite proposals"],
+    "max_turns": 5,
+    "hints": ["Propose: 'We could collaborate on...'", "Highlight value: 'Our strength is...'", "Ask: 'Would you be open to a pilot project?'", "Next step: 'Let me send you a proposal next week'"],
+    "system_prompt": "You are a business development manager from a Singapore-based retail tech company. You're interested in partnering with their company for the Vietnamese market. Keep responses short (1-2 sentences). Ask about their market size, current partners, and timeline. Be professional but warm. Agree to follow up after the conference."
   }
 ]
+
