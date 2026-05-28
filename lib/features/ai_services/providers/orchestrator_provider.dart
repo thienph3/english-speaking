@@ -32,49 +32,53 @@ final offlineModeProvider = StateProvider<bool>((ref) => false);
 /// Provider cho QuotaTracker singleton.
 final quotaTrackerProvider = Provider<QuotaTracker>((ref) => QuotaTracker());
 
-/// Provider chính cho AI Service Orchestrator.
+/// Provider chính cho AI Service Orchestrator (singleton).
+///
+/// Orchestrator is created once and reuses providers across
+/// connectivity/strategy changes. Only strategy and connectivity
+/// are updated — native resources are not recreated.
 final orchestratorProvider = Provider<AiOrchestrator>((ref) {
   final supabase = ref.read(supabaseProvider);
-  final isOnline = ref.watch(isOnlineProvider);
-  final offlineMode = ref.watch(offlineModeProvider);
   final quotaTracker = ref.read(quotaTrackerProvider);
 
-  final strategy = offlineMode
+  final orchestrator = AiOrchestrator(
+    supabase: supabase,
+    quotaTracker: quotaTracker,
+  );
+
+  // Reactively update mutable fields without recreating
+  orchestrator.isOnline = ref.watch(isOnlineProvider);
+  final offlineMode = ref.watch(offlineModeProvider);
+  orchestrator.strategy = offlineMode
       ? FallbackStrategy.offlineOnly
       : ref.watch(fallbackStrategyProvider);
 
-  return AiOrchestrator(
-    supabase: supabase,
-    isOnline: isOnline,
-    strategy: strategy,
-    quotaTracker: quotaTracker,
-  );
+  ref.onDispose(() => orchestrator.dispose());
+
+  return orchestrator;
 });
 
 /// Orchestrator trung tâm điều phối tất cả AI service requests.
 ///
-/// Tự động chọn provider phù hợp dựa trên:
-/// - Connectivity state (online/offline)
-/// - FallbackStrategy (free_first, quality_first, offline_only)
-/// - Provider availability
+/// Singleton — tạo một lần, cập nhật strategy/connectivity qua setter.
+/// Native resources (sherpa_onnx) được giải phóng khi dispose.
 class AiOrchestrator {
   AiOrchestrator({
     required SupabaseClient supabase,
-    required this.isOnline,
-    required this.strategy,
     required this.quotaTracker,
   }) {
-    _registry = ProviderRegistry();
     _registerProviders(supabase);
   }
 
-  final bool isOnline;
-  final FallbackStrategy strategy;
+  bool isOnline = true;
+  FallbackStrategy strategy = FallbackStrategy.freeFist;
   final QuotaTracker quotaTracker;
-  late final ProviderRegistry _registry;
+  final _registry = ProviderRegistry();
+
+  late final SherpaOnnxTtsProvider _offlineTts;
+  late final SherpaOnnxSttProvider _offlineStt;
 
   void _registerProviders(SupabaseClient supabase) {
-    // Online providers
     _registry.register(ServiceType.tts, SupabaseTtsProvider(supabase));
     _registry.register(ServiceType.stt, SupabaseSttProvider(supabase));
     _registry.register(ServiceType.llm, SupabaseLlmProvider(supabase));
@@ -83,19 +87,19 @@ class AiOrchestrator {
       SupabasePronunciationProvider(supabase),
     );
 
-    // Offline providers
     final modelManager = ModelManager();
-    _registry.register(
-      ServiceType.tts,
-      SherpaOnnxTtsProvider(modelManager),
-    );
-    _registry.register(
-      ServiceType.stt,
-      SherpaOnnxSttProvider(modelManager),
-    );
+    _offlineTts = SherpaOnnxTtsProvider(modelManager);
+    _offlineStt = SherpaOnnxSttProvider(modelManager);
+    _registry.register(ServiceType.tts, _offlineTts);
+    _registry.register(ServiceType.stt, _offlineStt);
   }
 
-  /// Text-to-Speech: chuyển text thành audio bytes.
+  /// Giải phóng native resources.
+  void dispose() {
+    _offlineTts.dispose();
+    _offlineStt.dispose();
+  }
+
   Future<Uint8List> synthesize(String text) async {
     final providers = _getChain<TtsProvider>(ServiceType.tts);
     return FallbackChain.execute(
@@ -108,7 +112,6 @@ class AiOrchestrator {
     );
   }
 
-  /// Speech-to-Text: chuyển audio thành transcript.
   Future<String> transcribe(Uint8List audio) async {
     final providers = _getChain<SttProvider>(ServiceType.stt);
     return FallbackChain.execute(
@@ -121,7 +124,6 @@ class AiOrchestrator {
     );
   }
 
-  /// LLM Chat: gửi messages, nhận response.
   Future<String> chat({
     required List<Map<String, String>> messages,
     required String systemPrompt,
@@ -130,14 +132,14 @@ class AiOrchestrator {
     return FallbackChain.execute(
       chain: providers,
       action: (p) async {
-        final result = await p.chat(messages: messages, systemPrompt: systemPrompt);
+        final result =
+            await p.chat(messages: messages, systemPrompt: systemPrompt);
         await quotaTracker.record(p.info.id);
         return result;
       },
     );
   }
 
-  /// Pronunciation Assessment: đánh giá phát âm.
   Future<PronunciationResponse> assess({
     required Uint8List audio,
     required String referenceText,
@@ -147,18 +149,17 @@ class AiOrchestrator {
     return FallbackChain.execute(
       chain: providers,
       action: (p) async {
-        final result = await p.assess(audio: audio, referenceText: referenceText);
+        final result =
+            await p.assess(audio: audio, referenceText: referenceText);
         await quotaTracker.record(p.info.id);
         return result;
       },
     );
   }
 
-  /// Lấy fallback chain đã sort theo strategy cho một ServiceType.
   List<T> _getChain<T>(ServiceType type) {
     var providers = _registry.getAvailable<T>(type);
 
-    // Nếu offline → lọc bỏ online providers
     if (!isOnline) {
       providers = providers.where((p) {
         final info = (p as dynamic).info as ProviderInfo;
@@ -166,7 +167,6 @@ class AiOrchestrator {
       }).toList();
     }
 
-    // Lọc bỏ providers đã hết quota
     providers = providers.where((p) {
       final info = (p as dynamic).info as ProviderInfo;
       return !quotaTracker.isExceeded(info);

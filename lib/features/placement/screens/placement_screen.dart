@@ -20,7 +20,6 @@ class PlacementScreen extends ConsumerStatefulWidget {
 
 class _PlacementScreenState extends ConsumerState<PlacementScreen> {
   late final AudioService _audioService;
-  String? _recordingPath;
 
   @override
   void initState() {
@@ -152,9 +151,9 @@ class _PlacementScreenState extends ConsumerState<PlacementScreen> {
       final path = await _audioService.stopRecording();
       if (path != null) await notifier.submitRecording(path);
     } else {
-      _recordingPath =
+      final path =
           '/tmp/placement_${DateTime.now().millisecondsSinceEpoch}.wav';
-      await _audioService.startRecording(_recordingPath!);
+      await _audioService.startRecording(path);
       notifier.startRecording();
     }
   }
