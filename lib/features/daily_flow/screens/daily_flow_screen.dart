@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_flow_provider.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_flow_state.dart';
+import 'package:speakeng/features/daily_flow/providers/daily_sentences_provider.dart';
 import 'package:speakeng/features/daily_flow/widgets/daily_summary_card.dart';
 
 /// Màn hình chính Daily Flow.
@@ -51,7 +52,7 @@ class DailyFlowScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              _buildCta(context, state),
+              _buildCta(context, state, ref),
             ],
           ),
         ),
@@ -97,7 +98,7 @@ class DailyFlowScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCta(BuildContext context, DailyFlowState state) {
+  Widget _buildCta(BuildContext context, DailyFlowState state, WidgetRef ref) {
     final label = _getCtaLabel(state);
     final enabled = !state.isComplete;
 
@@ -106,7 +107,7 @@ class DailyFlowScreen extends ConsumerWidget {
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: enabled ? () => _handleCta(context, state) : null,
+          onPressed: enabled ? () => _handleCta(context, state, ref) : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.textOnPrimary,
@@ -128,10 +129,13 @@ class DailyFlowScreen extends ConsumerWidget {
     return 'Tiếp tục';
   }
 
-  void _handleCta(BuildContext context, DailyFlowState state) {
+  void _handleCta(BuildContext context, DailyFlowState state, WidgetRef ref) {
     switch (state.nextStep) {
       case DailyFlowStep.shadowing:
-        context.push('/shadowing/next');
+        final sentences = ref.read(dailySentencesProvider).value ?? [];
+        if (sentences.isEmpty) return;
+        final idx = state.shadowingCompleted.clamp(0, sentences.length - 1);
+        context.push('/shadowing/${sentences[idx].id}');
       case DailyFlowStep.conversation:
         context.push('/conversation/daily');
       case DailyFlowStep.summary:
