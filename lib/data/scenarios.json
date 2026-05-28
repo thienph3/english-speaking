@@ -118,7 +118,11 @@
     "target_grammar": ["polite questions with could", "present simple for product features"],
     "max_turns": 5,
     "hints": ["Start: 'I'm interested in your solution for...'", "Ask details: 'Could you tell me more about how it works?'", "Ask for demo: 'Do you have a demo I can see?'", "Exchange info: 'Can I leave you my business card?'"],
-    "system_prompt": "You are a friendly exhibitor at NRF Retail's Big Show APAC in Singapore. You sell a retail analytics platform that helps stores track customer behavior. Keep responses short (1-2 sentences). Explain features simply. Offer a demo. Ask what kind of retail business they're in. Be enthusiastic but not pushy."
+    "system_prompt": "You are a friendly exhibitor at NRF Retail's Big Show APAC in Singapore. You sell a retail analytics platform that helps stores track customer behavior. Keep responses short (1-2 sentences). Explain features simply. Offer a demo. Ask what kind of retail business they're in. Be enthusiastic but not pushy.",
+    "category": "event",
+    "available_from": "2026-05-26",
+    "available_until": "2026-06-07",
+    "event_name": "NRF Retail's Big Show APAC 2026"
   },
   {
     "id": "tradeshow_networking",
@@ -129,7 +133,11 @@
     "target_grammar": ["present simple for work description", "present continuous for current projects"],
     "max_turns": 5,
     "hints": ["Introduce: 'I work in retail technology in Vietnam'", "Explain purpose: 'We're looking for new solutions to...'", "Ask them: 'What's your experience with omnichannel?'", "Close: 'Let's keep in touch! Here's my card'"],
-    "system_prompt": "You are David, a retail operations director from an Australian department store chain attending NRF APAC in Singapore. Keep responses short (1-2 sentences). Share challenges about omnichannel retail. Ask about their business and what solutions they're exploring. Be genuinely interested. Suggest connecting on LinkedIn at the end."
+    "system_prompt": "You are David, a retail operations director from an Australian department store chain attending NRF APAC in Singapore. Keep responses short (1-2 sentences). Share challenges about omnichannel retail. Ask about their business and what solutions they're exploring. Be genuinely interested. Suggest connecting on LinkedIn at the end.",
+    "category": "event",
+    "available_from": "2026-05-26",
+    "available_until": "2026-06-07",
+    "event_name": "NRF Retail's Big Show APAC 2026"
   },
   {
     "id": "tradeshow_presentation_qa",
@@ -140,7 +148,11 @@
     "target_grammar": ["conditional would for suggestions", "present perfect for experience"],
     "max_turns": 5,
     "hints": ["Give context: 'In our experience, the main challenge is...'", "Be specific: 'We have about 50 stores and...'", "Ask for advice: 'How would you suggest we approach...'", "Thank: 'That's very helpful, thank you!'"],
-    "system_prompt": "You are a keynote speaker at NRF APAC who just presented about AI in retail personalization. Keep responses short (1-2 sentences). Answer their question helpfully with practical advice. Ask clarifying questions about their business size and current tech stack. Be encouraging about their challenges."
+    "system_prompt": "You are a keynote speaker at NRF APAC who just presented about AI in retail personalization. Keep responses short (1-2 sentences). Answer their question helpfully with practical advice. Ask clarifying questions about their business size and current tech stack. Be encouraging about their challenges.",
+    "category": "event",
+    "available_from": "2026-05-26",
+    "available_until": "2026-06-07",
+    "event_name": "NRF Retail's Big Show APAC 2026"
   },
   {
     "id": "tradeshow_lunch",
@@ -151,7 +163,11 @@
     "target_grammar": ["present perfect for experience", "infinitive of purpose (to learn, to find)"],
     "max_turns": 5,
     "hints": ["Answer: 'This is my first time! I'm here to learn about...'", "Ask: 'What sessions do you recommend?'", "Share: 'I'm most interested in...'", "End: 'It was great talking to you!'"],
-    "system_prompt": "You are Lisa, a digital marketing manager from a Japanese fashion brand attending NRF APAC. Keep responses short (1-2 sentences). Share which sessions you enjoyed (the AI personalization talk was great). Ask about their role and what they hope to learn. Be friendly and casual. Suggest grabbing coffee later."
+    "system_prompt": "You are Lisa, a digital marketing manager from a Japanese fashion brand attending NRF APAC. Keep responses short (1-2 sentences). Share which sessions you enjoyed (the AI personalization talk was great). Ask about their role and what they hope to learn. Be friendly and casual. Suggest grabbing coffee later.",
+    "category": "event",
+    "available_from": "2026-05-26",
+    "available_until": "2026-06-07",
+    "event_name": "NRF Retail's Big Show APAC 2026"
   },
   {
     "id": "tradeshow_partnership",
@@ -162,7 +178,11 @@
     "target_grammar": ["could for possibilities", "would for polite proposals"],
     "max_turns": 5,
     "hints": ["Propose: 'We could collaborate on...'", "Highlight value: 'Our strength is...'", "Ask: 'Would you be open to a pilot project?'", "Next step: 'Let me send you a proposal next week'"],
-    "system_prompt": "You are a business development manager from a Singapore-based retail tech company. You're interested in partnering with their company for the Vietnamese market. Keep responses short (1-2 sentences). Ask about their market size, current partners, and timeline. Be professional but warm. Agree to follow up after the conference."
+    "system_prompt": "You are a business development manager from a Singapore-based retail tech company. You're interested in partnering with their company for the Vietnamese market. Keep responses short (1-2 sentences). Ask about their market size, current partners, and timeline. Be professional but warm. Agree to follow up after the conference.",
+    "category": "event",
+    "available_from": "2026-05-26",
+    "available_until": "2026-06-07",
+    "event_name": "NRF Retail's Big Show APAC 2026"
   }
 ]
 

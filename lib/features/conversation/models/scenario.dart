@@ -3,43 +3,56 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'scenario.freezed.dart';
 part 'scenario.g.dart';
 
+/// Loại scenario: thường xuyên hoặc sự kiện có thời hạn.
+enum ScenarioCategory { common, event }
+
 /// Kịch bản hội thoại AI cho conversation practice.
 ///
-/// Mỗi scenario có tình huống, vai trò AI, target phrases,
-/// và system prompt để điều khiển hành vi AI.
+/// - [common]: scenarios luôn hiển thị (daily life, work, travel)
+/// - [event]: scenarios chỉ hiển thị trong khoảng thời gian nhất định
+///   (trade shows, conferences, trips)
+///
+/// Khi migrate lên backend, server trả về scenarios filtered by date.
 @freezed
 abstract class Scenario with _$Scenario {
+  const Scenario._();
+
   const factory Scenario({
-    /// ID duy nhất của scenario.
     required String id,
-
-    /// Mô tả tình huống hội thoại.
     required String situation,
-
-    /// Vai trò của AI trong hội thoại.
     @JsonKey(name: 'ai_role') required String aiRole,
-
-    /// Tin nhắn đầu tiên AI gửi cho user.
     @JsonKey(name: 'first_message') required String firstMessage,
-
-    /// Đường dẫn audio pre-cached cho first message.
     @JsonKey(name: 'first_message_audio_path') String? firstMessageAudioPath,
-
-    /// Danh sách cụm từ mục tiêu user nên sử dụng.
     @JsonKey(name: 'target_phrases') required List<String> targetPhrases,
-
-    /// Danh sách ngữ pháp mục tiêu.
     @JsonKey(name: 'target_grammar') required List<String> targetGrammar,
-
-    /// Số lượt hội thoại tối đa.
     @JsonKey(name: 'max_turns') @Default(5) int maxTurns,
-
-    /// Danh sách gợi ý cho user.
     required List<String> hints,
-
-    /// System prompt gửi cho GPT-4o-mini.
     @JsonKey(name: 'system_prompt') required String systemPrompt,
+
+    /// Phân loại: 'common' (mặc định) hoặc 'event'.
+    @Default(ScenarioCategory.common) ScenarioCategory category,
+
+    /// Ngày bắt đầu hiển thị (ISO 8601). Null = luôn hiển thị.
+    @JsonKey(name: 'available_from') String? availableFrom,
+
+    /// Ngày kết thúc hiển thị (ISO 8601). Null = không hết hạn.
+    @JsonKey(name: 'available_until') String? availableUntil,
+
+    /// Tên sự kiện (cho UI grouping).
+    @JsonKey(name: 'event_name') String? eventName,
   }) = _Scenario;
+
+  /// Scenario có đang available tại thời điểm hiện tại không.
+  bool get isAvailableNow {
+    final now = DateTime.now();
+    if (availableFrom != null) {
+      if (now.isBefore(DateTime.parse(availableFrom!))) return false;
+    }
+    if (availableUntil != null) {
+      if (now.isAfter(DateTime.parse(availableUntil!))) return false;
+    }
+    return true;
+  }
 
   factory Scenario.fromJson(Map<String, dynamic> json) =>
       _$ScenarioFromJson(json);
