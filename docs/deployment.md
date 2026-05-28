@@ -2,10 +2,13 @@
 
 ## Quick Start (Scripted)
 
+> **Note:** You must manually create accounts and get API keys first (see Step 3 below).
+> The scripts automate deployment *after* you have credentials.
+
 ```bash
 # macOS/Linux
 ./scripts/setup.sh        # First run: creates .env template
-# Fill in .env with real credentials
+# Fill in .env with real credentials (see Step 3 for where to get them)
 ./scripts/setup.sh        # Second run: deploys everything
 python3 scripts/generate_voices.py
 ./scripts/build.sh        # Build APK
@@ -14,7 +17,7 @@ python3 scripts/generate_voices.py
 ```cmd
 REM Windows
 scripts\setup.bat
-REM Fill in .env with real credentials
+REM Fill in .env with real credentials (see Step 3 for where to get them)
 scripts\setup.bat
 python scripts\generate_voices.py
 scripts\build.bat
