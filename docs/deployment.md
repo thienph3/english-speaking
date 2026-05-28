@@ -1,5 +1,29 @@
 # Deployment Guide — SpeakEng
 
+## Quick Start (Scripted)
+
+```bash
+# macOS/Linux
+./scripts/setup.sh        # First run: creates .env template
+# Fill in .env with real credentials
+./scripts/setup.sh        # Second run: deploys everything
+python3 scripts/generate_voices.py
+./scripts/build.sh        # Build APK
+```
+
+```cmd
+REM Windows
+scripts\setup.bat
+REM Fill in .env with real credentials
+scripts\setup.bat
+python scripts\generate_voices.py
+scripts\build.bat
+```
+
+---
+
+## Manual Steps (if scripts don't work)
+
 ## Prerequisites
 
 - [Supabase CLI](https://supabase.com/docs/guides/cli) installed
