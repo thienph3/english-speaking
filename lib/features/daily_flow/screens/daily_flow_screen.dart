@@ -7,6 +7,8 @@ import 'package:speakeng/features/daily_flow/providers/daily_flow_provider.dart'
 import 'package:speakeng/features/daily_flow/providers/daily_flow_state.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_sentences_provider.dart';
 import 'package:speakeng/features/daily_flow/widgets/daily_summary_card.dart';
+import 'package:speakeng/shared/services/streak_service.dart';
+import 'package:speakeng/shared/services/event_logger.dart';
 
 /// Màn hình chính Daily Flow.
 ///
@@ -18,6 +20,23 @@ class DailyFlowScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dailyFlowProvider);
+
+    ref.listen<DailyFlowState>(dailyFlowProvider, (prev, next) {
+      final logger = ref.read(eventLoggerProvider);
+      if (prev != null) {
+        if (next.shadowingCompleted > prev.shadowingCompleted) {
+          logger.log('shadowing_completed', metadata: {
+            'index': next.shadowingCompleted,
+          });
+        }
+        if (next.conversationCompleted && !prev.conversationCompleted) {
+          logger.log('conversation_completed');
+        }
+        if (next.isComplete && !prev.isComplete) {
+          logger.log('daily_flow_completed');
+        }
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -44,6 +63,7 @@ class DailyFlowScreen extends ConsumerWidget {
                     children: [
                       const SizedBox(height: AppSpacing.lg),
                       _buildGreeting(),
+                      _buildStreak(),
                       const SizedBox(height: AppSpacing.lg),
                       _buildProgressSteps(state),
                       const SizedBox(height: AppSpacing.lg),
@@ -69,6 +89,18 @@ class DailyFlowScreen extends ConsumerWidget {
             : 'Chào buổi tối! 👋';
 
     return Text(greeting, style: AppTypography.h1);
+  }
+
+  Widget _buildStreak() {
+    final streak = StreakService.getStreak();
+    if (streak == 0) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Text(
+        '🔥 $streak ngày liên tiếp',
+        style: AppTypography.bodyMedium.copyWith(color: AppColors.needsWork),
+      ),
+    );
   }
 
   Widget _buildProgressSteps(DailyFlowState state) {
@@ -131,8 +163,12 @@ class DailyFlowScreen extends ConsumerWidget {
   }
 
   void _handleCta(BuildContext context, DailyFlowState state, WidgetRef ref) {
+    final logger = ref.read(eventLoggerProvider);
     switch (state.nextStep) {
       case DailyFlowStep.shadowing:
+        if (state.shadowingCompleted == 0) {
+          logger.log('daily_flow_started');
+        }
         final sentences = ref.read(dailySentencesProvider).value ?? [];
         if (sentences.isEmpty) return;
         final idx = state.shadowingCompleted.clamp(0, sentences.length - 1);

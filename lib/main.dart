@@ -7,6 +7,7 @@ import 'package:sherpa_onnx/sherpa_onnx.dart' as sherpa;
 
 import 'app.dart';
 import 'features/ai_services/logic/quota_tracker.dart';
+import 'shared/services/notification_service.dart';
 import 'shared/services/prefs_service.dart';
 import 'shared/services/supabase_service.dart';
 
@@ -18,6 +19,10 @@ Future<void> main() async {
 
   // Initialize quota tracker early so UI shows correct values
   await QuotaTracker().load();
+
+  // Daily reminder notification
+  await NotificationService.initialize();
+  await NotificationService.scheduleDailyReminder();
 
   // Global error handlers — prevent white screen of death
   FlutterError.onError = (details) {

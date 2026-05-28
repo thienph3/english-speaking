@@ -30,6 +30,9 @@ dependencies:
   # Offline TTS/STT
   sherpa_onnx: 1.13.2
 
+  # Notifications
+  flutter_local_notifications: 18.0.1
+
   # Persistence
   shared_preferences: 2.3.4
 

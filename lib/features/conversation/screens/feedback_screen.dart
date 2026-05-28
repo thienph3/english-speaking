@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/conversation/logic/response_time_calculator.dart';
@@ -110,18 +111,46 @@ class FeedbackScreen extends StatelessWidget {
   Widget _buildDoneButton() {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: onDone,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.textOnPrimary,
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-            shape: const RoundedRectangleBorder(borderRadius: AppRadius.md),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onDone,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.textOnPrimary,
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                shape: const RoundedRectangleBorder(borderRadius: AppRadius.md),
+              ),
+              child: const Text('Hoàn thành', style: AppTypography.button),
+            ),
           ),
-          child: const Text('Hoàn thành', style: AppTypography.button),
-        ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: double.infinity,
+            child: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () {
+                  context.pop();
+                  context.push('/conversation/daily');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryLight,
+                  foregroundColor: AppColors.primary,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  shape:
+                      const RoundedRectangleBorder(borderRadius: AppRadius.md),
+                ),
+                child: const Text(
+                  'Luyện lại với gợi ý',
+                  style: AppTypography.button,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
