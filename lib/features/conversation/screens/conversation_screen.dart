@@ -10,14 +10,11 @@ import 'package:speakeng/features/conversation/models/scenario.dart';
 import 'package:speakeng/features/conversation/providers/conversation_provider.dart';
 import 'package:speakeng/features/conversation/providers/conversation_state.dart';
 import 'package:speakeng/features/conversation/widgets/chat_bubble.dart';
+import 'package:speakeng/features/conversation/widgets/conversation_bottom_actions.dart';
 import 'package:speakeng/features/conversation/widgets/typing_indicator.dart';
 import 'package:speakeng/shared/services/audio_service.dart';
-import 'package:speakeng/shared/widgets/recording_button.dart';
 
 /// Màn hình hội thoại AI.
-///
-/// Hiển thị chat bubbles, typing indicator, nút ghi âm,
-/// turn counter trong AppBar, và nút gợi ý.
 class ConversationScreen extends ConsumerStatefulWidget {
   const ConversationScreen({super.key, required this.scenario});
 
@@ -52,9 +49,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(conversationProvider);
     final turnCount = _getTurnCount(state);
-    final maxTurns = AppConstants.maxConversationTurns;
 
-    // Play TTS audio when AI finishes responding
     ref.listen<ConversationState>(conversationProvider, (prev, next) {
       if (next is ConversationSpeaking && next.cachedAudioPath != null) {
         _playTtsAudio(next.cachedAudioPath!);
@@ -71,7 +66,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             child: Padding(
               padding: const EdgeInsets.only(right: AppSpacing.md),
               child: Text(
-                '$turnCount/$maxTurns',
+                '$turnCount/${AppConstants.maxConversationTurns}',
                 style: AppTypography.h3,
               ),
             ),
@@ -82,7 +77,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         child: Column(
           children: [
             Expanded(child: _buildChatList(state)),
-            _buildBottomActions(state),
+            ConversationBottomActions(
+              hints: widget.scenario.hints,
+              onRecord: () => _handleRecordPress(state),
+            ),
           ],
         ),
       ),
@@ -91,6 +89,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
   Widget _buildChatList(ConversationState state) {
     final messages = _getMessages(state);
+    final showTyping =
+        state is ConversationTranscribing || state is ConversationThinking;
 
     return ListView.builder(
       controller: _scrollController,
@@ -98,7 +98,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         horizontal: AppSpacing.md,
         vertical: AppSpacing.sm,
       ),
-      itemCount: messages.length + (_showTyping(state) ? 1 : 0),
+      itemCount: messages.length + (showTyping ? 1 : 0),
       itemBuilder: (context, index) {
         if (index < messages.length) {
           final msg = messages[index];
@@ -112,85 +112,22 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     );
   }
 
-  Widget _buildBottomActions(ConversationState state) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildHintButton(state),
-          RecordingButton(
-            state: _getRecordingButtonState(state),
-            onPressed: () => _handleRecordPress(state),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHintButton(ConversationState state) {
-    final turnCount = _getTurnCount(state);
-    final hintIndex = turnCount.clamp(0, widget.scenario.hints.length - 1);
-
-    return TextButton.icon(
-      onPressed: () => _showHint(hintIndex),
-      icon: const Text('💡', style: TextStyle(fontSize: 20)),
-      label: Text(
-        'Gợi ý',
-        style: AppTypography.button.copyWith(color: AppColors.primary),
-      ),
-    );
-  }
-
-  void _showHint(int hintIndex) {
-    if (widget.scenario.hints.isEmpty) return;
-
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('💡 Gợi ý', style: AppTypography.h2),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              widget.scenario.hints[hintIndex],
-              style: AppTypography.bodyLarge,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-          ],
-        ),
-      ),
-    );
-  }
-
   Future<void> _handleRecordPress(ConversationState state) async {
     if (state is ConversationRecording) {
       await _stopAndSubmit();
     } else if (state is ConversationSpeaking || state is ConversationError) {
-      _startRecording();
+      ref.read(conversationProvider.notifier).startRecording();
+      final dir = await getTemporaryDirectory();
+      await _audioService.startRecording(
+        '${dir.path}/conversation_recording.wav',
+      );
     }
-  }
-
-  void _startRecording() {
-    ref.read(conversationProvider.notifier).startRecording();
-    _startAudioRecording();
-  }
-
-  Future<void> _startAudioRecording() async {
-    final dir = await getTemporaryDirectory();
-    final path = '${dir.path}/conversation_recording.wav';
-    await _audioService.startRecording(path);
   }
 
   Future<void> _stopAndSubmit() async {
     final path = await _audioService.stopRecording();
     if (path == null) return;
-
-    final file = File(path);
-    final bytes = await file.readAsBytes();
+    final bytes = await File(path).readAsBytes();
     await ref.read(conversationProvider.notifier).submitRecording(bytes);
     _scrollToBottom();
   }
@@ -234,19 +171,6 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       ConversationCompleted(messages: final m) => m,
       ConversationError(messages: final m) => m,
       _ => [],
-    };
-  }
-
-  bool _showTyping(ConversationState state) {
-    return state is ConversationTranscribing || state is ConversationThinking;
-  }
-
-  RecordingButtonState _getRecordingButtonState(ConversationState state) {
-    return switch (state) {
-      ConversationRecording() => RecordingButtonState.recording,
-      ConversationSpeaking() => RecordingButtonState.idle,
-      ConversationError() => RecordingButtonState.idle,
-      _ => RecordingButtonState.disabled,
     };
   }
 }
