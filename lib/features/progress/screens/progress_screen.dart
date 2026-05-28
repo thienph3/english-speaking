@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/progress/providers/progress_provider.dart';
+import 'package:speakeng/features/progress/widgets/before_after_player.dart';
+import 'package:speakeng/shared/services/audio_service.dart';
 
 /// Màn hình Progress Dashboard.
 ///
@@ -16,12 +18,23 @@ class ProgressScreen extends ConsumerStatefulWidget {
 }
 
 class _ProgressScreenState extends ConsumerState<ProgressScreen> {
+  final _audioService = AudioService();
+  String? _currentlyPlaying;
+  String? _beforeUrl;
+  String? _afterUrl;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(progressProvider.notifier).loadProgress();
     });
+  }
+
+  @override
+  void dispose() {
+    _audioService.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,6 +80,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           _buildAccuracyCard(state),
           const SizedBox(height: AppSpacing.md),
           _buildResponseTimeCard(state),
+          const SizedBox(height: AppSpacing.lg),
+          _buildBeforeAfterSection(),
         ],
       ),
     );
@@ -113,6 +128,43 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     if (diff == 0) return 'Không thay đổi so với tuần trước';
     final sign = diff > 0 ? '+' : '';
     return '$sign${diff.toStringAsFixed(1)}$unit so với tuần trước';
+  }
+
+  Widget _buildBeforeAfterSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('🎧 So sánh trước / sau', style: AppTypography.h3),
+        const SizedBox(height: AppSpacing.sm),
+        BeforeAfterPlayer(
+          beforeUrl: _beforeUrl,
+          afterUrl: _afterUrl,
+          currentlyPlaying: _currentlyPlaying,
+          onPlayBefore: _beforeUrl != null ? () => _play('before') : null,
+          onPlayAfter: _afterUrl != null ? () => _play('after') : null,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (_beforeUrl == null && _afterUrl == null)
+          Text(
+            'Bản ghi sẽ xuất hiện khi bạn master câu đầu tiên',
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _play(String which) async {
+    if (_currentlyPlaying == which) {
+      await _audioService.stop();
+      setState(() => _currentlyPlaying = null);
+      return;
+    }
+    final url = which == 'before' ? _beforeUrl! : _afterUrl!;
+    await _audioService.loadUrl(url);
+    await _audioService.play();
+    setState(() => _currentlyPlaying = which);
   }
 }
 
