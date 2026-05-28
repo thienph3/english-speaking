@@ -27,6 +27,12 @@ dependencies:
   # File system
   path_provider: 2.1.5
 
+  # Offline TTS/STT
+  sherpa_onnx: 1.13.2
+
+  # Persistence
+  shared_preferences: 2.3.4
+
   # Serialization (runtime)
   freezed_annotation: 3.1.0
   json_annotation: 4.11.0
