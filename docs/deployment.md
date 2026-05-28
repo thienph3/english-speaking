@@ -67,15 +67,27 @@ This creates tables: `user_profiles`, `recordings`, `sentence_progress`, `daily_
 
 ## Step 3: Setup API Keys (15 min)
 
-### Azure Speech
+> Only Supabase is required. Other keys are optional — the app falls back to offline mode automatically.
+
+### Supabase (Required)
+- Needed for: auth, progress sync, recordings storage
+- Already have URL + Anon Key from Step 1
+
+### Azure Speech (Optional)
+- Needed for: phoneme-level pronunciation feedback
+- Without it: shadowing works but no accuracy scoring
 1. [Azure Portal](https://portal.azure.com) → Create "Speech Services" resource (Free F0 tier)
 2. Note: **Endpoint** and **Key 1**
 
-### OpenAI
+### OpenAI (Optional)
+- Needed for: AI conversation (GPT-4o-mini + Whisper + TTS)
+- Without it: conversation feature disabled, shadowing still works
 1. [platform.openai.com](https://platform.openai.com) → API Keys → Create
 2. Note: **API Key**
 
-### ElevenLabs
+### ElevenLabs (Optional)
+- Needed for: high-quality pre-generated shadowing audio
+- Without it: app uses offline Piper TTS (lower quality but works)
 1. [elevenlabs.io](https://elevenlabs.io) → Sign up (free tier: 10,000 chars/month)
 2. Profile → API Key
 3. Note: **API Key**
