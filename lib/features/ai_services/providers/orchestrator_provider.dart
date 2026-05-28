@@ -6,16 +6,20 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:speakeng/features/ai_services/logic/fallback_chain.dart';
 import 'package:speakeng/features/ai_services/logic/provider_registry.dart';
+import 'package:speakeng/features/ai_services/logic/quota_tracker.dart';
 import 'package:speakeng/features/ai_services/models/service_types.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/llm_provider.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/pronunciation_provider.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/stt_provider.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/tts_provider.dart';
+import 'package:speakeng/features/ai_services/providers/offline/sherpa_onnx_stt_provider.dart';
+import 'package:speakeng/features/ai_services/providers/offline/sherpa_onnx_tts_provider.dart';
 import 'package:speakeng/features/ai_services/providers/online/supabase_llm_provider.dart';
 import 'package:speakeng/features/ai_services/providers/online/supabase_pronunciation_provider.dart';
 import 'package:speakeng/features/ai_services/providers/online/supabase_stt_provider.dart';
 import 'package:speakeng/features/ai_services/providers/online/supabase_tts_provider.dart';
 import 'package:speakeng/features/ai_services/services/connectivity_service.dart';
+import 'package:speakeng/features/ai_services/services/model_manager.dart';
 import 'package:speakeng/shared/services/supabase_service.dart';
 
 /// Provider cho FallbackStrategy hiện tại (user có thể thay đổi).
@@ -25,11 +29,15 @@ final fallbackStrategyProvider =
 /// Provider cho offline mode toggle.
 final offlineModeProvider = StateProvider<bool>((ref) => false);
 
+/// Provider cho QuotaTracker singleton.
+final quotaTrackerProvider = Provider<QuotaTracker>((ref) => QuotaTracker());
+
 /// Provider chính cho AI Service Orchestrator.
 final orchestratorProvider = Provider<AiOrchestrator>((ref) {
   final supabase = ref.read(supabaseProvider);
   final isOnline = ref.watch(isOnlineProvider);
   final offlineMode = ref.watch(offlineModeProvider);
+  final quotaTracker = ref.read(quotaTrackerProvider);
 
   final strategy = offlineMode
       ? FallbackStrategy.offlineOnly
@@ -39,6 +47,7 @@ final orchestratorProvider = Provider<AiOrchestrator>((ref) {
     supabase: supabase,
     isOnline: isOnline,
     strategy: strategy,
+    quotaTracker: quotaTracker,
   );
 });
 
@@ -53,6 +62,7 @@ class AiOrchestrator {
     required SupabaseClient supabase,
     required this.isOnline,
     required this.strategy,
+    required this.quotaTracker,
   }) {
     _registry = ProviderRegistry();
     _registerProviders(supabase);
@@ -60,6 +70,7 @@ class AiOrchestrator {
 
   final bool isOnline;
   final FallbackStrategy strategy;
+  final QuotaTracker quotaTracker;
   late final ProviderRegistry _registry;
 
   void _registerProviders(SupabaseClient supabase) {
@@ -71,7 +82,17 @@ class AiOrchestrator {
       ServiceType.pronunciation,
       SupabasePronunciationProvider(supabase),
     );
-    // TODO(thienph3): đăng ký offline providers khi implement
+
+    // Offline providers
+    final modelManager = ModelManager();
+    _registry.register(
+      ServiceType.tts,
+      SherpaOnnxTtsProvider(modelManager),
+    );
+    _registry.register(
+      ServiceType.stt,
+      SherpaOnnxSttProvider(modelManager),
+    );
   }
 
   /// Text-to-Speech: chuyển text thành audio bytes.
@@ -79,7 +100,11 @@ class AiOrchestrator {
     final providers = _getChain<TtsProvider>(ServiceType.tts);
     return FallbackChain.execute(
       chain: providers,
-      action: (p) => p.synthesize(text),
+      action: (p) async {
+        final result = await p.synthesize(text);
+        await quotaTracker.record(p.info.id);
+        return result;
+      },
     );
   }
 
@@ -88,7 +113,11 @@ class AiOrchestrator {
     final providers = _getChain<SttProvider>(ServiceType.stt);
     return FallbackChain.execute(
       chain: providers,
-      action: (p) => p.transcribe(audio),
+      action: (p) async {
+        final result = await p.transcribe(audio);
+        await quotaTracker.record(p.info.id);
+        return result;
+      },
     );
   }
 
@@ -100,7 +129,11 @@ class AiOrchestrator {
     final providers = _getChain<LlmProvider>(ServiceType.llm);
     return FallbackChain.execute(
       chain: providers,
-      action: (p) => p.chat(messages: messages, systemPrompt: systemPrompt),
+      action: (p) async {
+        final result = await p.chat(messages: messages, systemPrompt: systemPrompt);
+        await quotaTracker.record(p.info.id);
+        return result;
+      },
     );
   }
 
@@ -113,7 +146,11 @@ class AiOrchestrator {
         _getChain<PronunciationProvider>(ServiceType.pronunciation);
     return FallbackChain.execute(
       chain: providers,
-      action: (p) => p.assess(audio: audio, referenceText: referenceText),
+      action: (p) async {
+        final result = await p.assess(audio: audio, referenceText: referenceText);
+        await quotaTracker.record(p.info.id);
+        return result;
+      },
     );
   }
 
@@ -128,6 +165,12 @@ class AiOrchestrator {
         return info.isOffline;
       }).toList();
     }
+
+    // Lọc bỏ providers đã hết quota
+    providers = providers.where((p) {
+      final info = (p as dynamic).info as ProviderInfo;
+      return !quotaTracker.isExceeded(info);
+    }).toList();
 
     return FallbackChain.sort<T>(
       providers: providers,

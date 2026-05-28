@@ -5,6 +5,8 @@ import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/ai_services/models/service_types.dart';
 import 'package:speakeng/features/ai_services/providers/orchestrator_provider.dart';
 import 'package:speakeng/features/ai_services/services/connectivity_service.dart';
+import 'package:speakeng/features/ai_services/widgets/model_download_card.dart';
+import 'package:speakeng/features/ai_services/widgets/quota_usage_card.dart';
 
 /// Màn hình Settings — bật/tắt offline mode và xem trạng thái provider.
 class SettingsScreen extends ConsumerWidget {
@@ -27,6 +29,10 @@ class SettingsScreen extends ConsumerWidget {
             _ConnectivityCard(isOnline: isOnline),
             const SizedBox(height: 16),
 
+            // Quota usage
+            const QuotaUsageCard(),
+            const SizedBox(height: 16),
+
             // Offline mode toggle
             _OfflineToggleCard(
               offlineMode: offlineMode,
@@ -43,6 +49,31 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (value) {
                 ref.read(fallbackStrategyProvider.notifier).state = value;
               },
+            ),
+            const SizedBox(height: 24),
+
+            // Offline models section
+            const Text(
+              'Offline Models',
+              style: AppTypography.h3,
+            ),
+            const SizedBox(height: 8),
+            ModelDownloadCard(
+              title: 'TTS — Piper English',
+              subtitle: '~30 MB • Đọc câu tiếng Anh offline',
+              icon: Icons.record_voice_over,
+              checkReady: (m) => m.isTtsReady,
+              download: (m, onProgress) =>
+                  m.downloadTtsModel(onProgress: onProgress),
+            ),
+            const SizedBox(height: 8),
+            ModelDownloadCard(
+              title: 'STT — Whisper Tiny',
+              subtitle: '~40 MB • Nhận diện giọng nói offline',
+              icon: Icons.mic,
+              checkReady: (m) => m.isSttReady,
+              download: (m, onProgress) =>
+                  m.downloadSttModel(onProgress: onProgress),
             ),
           ],
         ),
