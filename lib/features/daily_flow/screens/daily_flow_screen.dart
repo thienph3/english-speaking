@@ -123,10 +123,11 @@ class DailyFlowScreen extends ConsumerWidget {
 
   String _getCtaLabel(DailyFlowState state) {
     if (state.isComplete) return 'Hoàn thành! 🎉';
-    if (state.shadowingCompleted == 0 && !state.conversationCompleted) {
-      return 'Bắt đầu luyện';
+    if (state.nextStep == DailyFlowStep.conversation) {
+      return 'Bắt đầu hội thoại';
     }
-    return 'Tiếp tục';
+    if (state.shadowingCompleted == 0) return 'Bắt đầu luyện';
+    return 'Luyện câu ${state.shadowingCompleted + 1}/3';
   }
 
   void _handleCta(BuildContext context, DailyFlowState state, WidgetRef ref) {

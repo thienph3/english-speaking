@@ -5,6 +5,7 @@ import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/shadowing/models/pronunciation_result.dart';
 import 'package:speakeng/features/shadowing/providers/shadowing_provider.dart';
 import 'package:speakeng/features/shadowing/widgets/word_feedback_chip.dart';
+import 'package:speakeng/shared/widgets/animated_score_reveal.dart';
 import 'package:speakeng/shared/widgets/score_card.dart';
 
 /// Hiển thị text câu shadowing ở giữa màn hình.
@@ -101,10 +102,12 @@ class ResultContent extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           const SizedBox(height: AppSpacing.lg),
-          ScoreCard(
-            accuracy: accuracy,
-            fluency: fluency,
-            completeness: completeness,
+          AnimatedScoreReveal(
+            child: ScoreCard(
+              accuracy: accuracy,
+              fluency: fluency,
+              completeness: completeness,
+            ),
           ),
         ],
       ),

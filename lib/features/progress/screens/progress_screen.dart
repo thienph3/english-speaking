@@ -9,6 +9,7 @@ import 'package:speakeng/features/progress/widgets/before_after_player.dart';
 import 'package:speakeng/features/progress/widgets/sentence_list_card.dart';
 import 'package:speakeng/shared/services/audio_service.dart';
 import 'package:speakeng/shared/widgets/empty_state.dart';
+import 'package:speakeng/shared/widgets/shimmer_loading.dart';
 
 /// Màn hình Progress Dashboard.
 ///
@@ -50,7 +51,18 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
       appBar: AppBar(elevation: 0, title: const Text('Tiến bộ')),
       body: SafeArea(
         child: state.isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  children: [
+                    const ShimmerLoading(width: double.infinity, height: 100),
+                    const SizedBox(height: AppSpacing.md),
+                    const ShimmerLoading(width: double.infinity, height: 100),
+                    const SizedBox(height: AppSpacing.md),
+                    const ShimmerLoading(width: double.infinity, height: 100),
+                  ],
+                ),
+              )
             : _buildContent(state),
       ),
     );
