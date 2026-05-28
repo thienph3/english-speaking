@@ -204,6 +204,10 @@ SpeakEng MVP là ứng dụng Flutter (Android) giúp người Việt luyện ph
 4. THE App SHALL phân loại mỗi Sentence theo difficulty (easy, medium, hard) và situation.
 5. THE App SHALL gắn mỗi Sentence với danh sách phrases và target_grammar.
 
+---
+
+> **⚠️ SUPERSEDED**: Requirements 16–20 dưới đây đã được thay thế bởi spec `ai-service-orchestrator` (`.kiro/specs/ai-service-orchestrator/`). Giữ lại để reference lịch sử.
+
 ### Requirement 16: On-Device TTS/STT (Offline Voice Engine)
 
 **User Story:** Là một User, tôi muốn có option sử dụng TTS và STT offline trên device, để tiết kiệm chi phí API và giảm latency khi phát/nhận giọng nói.
