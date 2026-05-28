@@ -1,10 +1,13 @@
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:speakeng/core/exceptions.dart';
 import 'package:speakeng/features/placement/logic/placement_calculator.dart';
 import 'package:speakeng/features/placement/repositories/placement_repository.dart';
 import 'package:speakeng/features/shadowing/repositories/shadowing_repository.dart';
 import 'package:speakeng/shared/services/content_service.dart';
+
+part 'placement_provider.freezed.dart';
 
 /// Trạng thái của placement test.
 enum PlacementStatus {
@@ -18,48 +21,18 @@ enum PlacementStatus {
 }
 
 /// State class cho placement test.
-class PlacementState {
-  const PlacementState({
-    this.status = PlacementStatus.loading,
-    this.currentIndex = 0,
-    this.sentences = const [],
-    this.scores = const [],
-    this.currentScore,
-    this.level,
-    this.avgAccuracy,
-    this.errorMessage,
-  });
-
-  final PlacementStatus status;
-  final int currentIndex;
-  final List<PlacementSentence> sentences;
-  final List<double> scores;
-  final double? currentScore;
-  final String? level;
-  final double? avgAccuracy;
-  final String? errorMessage;
-
-  PlacementState copyWith({
-    PlacementStatus? status,
-    int? currentIndex,
-    List<PlacementSentence>? sentences,
-    List<double>? scores,
+@freezed
+sealed class PlacementState with _$PlacementState {
+  const factory PlacementState({
+    @Default(PlacementStatus.loading) PlacementStatus status,
+    @Default(0) int currentIndex,
+    @Default([]) List<PlacementSentence> sentences,
+    @Default([]) List<double> scores,
     double? currentScore,
     String? level,
     double? avgAccuracy,
     String? errorMessage,
-  }) {
-    return PlacementState(
-      status: status ?? this.status,
-      currentIndex: currentIndex ?? this.currentIndex,
-      sentences: sentences ?? this.sentences,
-      scores: scores ?? this.scores,
-      currentScore: currentScore,
-      level: level ?? this.level,
-      avgAccuracy: avgAccuracy ?? this.avgAccuracy,
-      errorMessage: errorMessage,
-    );
-  }
+  }) = _PlacementState;
 }
 
 /// Provider cho PlacementNotifier.
@@ -92,7 +65,6 @@ class PlacementNotifier extends StateNotifier<PlacementState> {
   final PlacementRepository _placementRepo;
   final ContentService _contentService;
 
-  /// Load 3 câu placement từ content service.
   Future<void> _loadSentences() async {
     try {
       final sentences = await _contentService.getPlacementSentences();
@@ -108,12 +80,10 @@ class PlacementNotifier extends StateNotifier<PlacementState> {
     }
   }
 
-  /// Bắt đầu ghi âm cho câu hiện tại.
   void startRecording() {
     state = state.copyWith(status: PlacementStatus.recording);
   }
 
-  /// Gửi audio đến /pronounce và xử lý kết quả.
   Future<void> submitRecording(String audioPath) async {
     state = state.copyWith(status: PlacementStatus.processing);
     try {
@@ -136,7 +106,6 @@ class PlacementNotifier extends StateNotifier<PlacementState> {
     }
   }
 
-  /// Chuyển sang câu tiếp theo hoặc hoàn thành placement.
   Future<void> nextSentence() async {
     final nextIndex = state.currentIndex + 1;
     if (nextIndex >= state.sentences.length) {
@@ -145,11 +114,11 @@ class PlacementNotifier extends StateNotifier<PlacementState> {
       state = state.copyWith(
         status: PlacementStatus.ready,
         currentIndex: nextIndex,
+        currentScore: null,
       );
     }
   }
 
-  /// Tính level và lưu kết quả vào Supabase.
   Future<void> _completePlacement() async {
     state = state.copyWith(status: PlacementStatus.processing);
     try {
@@ -172,7 +141,6 @@ class PlacementNotifier extends StateNotifier<PlacementState> {
     }
   }
 
-  /// Retry khi gặp lỗi — quay lại trạng thái ready.
   void retry() {
     state = state.copyWith(
       status: PlacementStatus.ready,

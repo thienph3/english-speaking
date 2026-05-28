@@ -74,9 +74,9 @@ class AuthScreen extends ConsumerWidget {
         const AuthEmailField(),
         const SizedBox(height: AppSpacing.md),
         const AuthPasswordField(),
-        if (authState.errorMessage != null) ...[
+        if (authState is AuthError) ...[
           const SizedBox(height: AppSpacing.md),
-          AuthErrorMessage(message: authState.errorMessage!),
+          AuthErrorMessage(message: authState.message),
         ],
         const SizedBox(height: AppSpacing.md),
         AuthToggleModeButton(isLogin: isLogin),

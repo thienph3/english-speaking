@@ -110,7 +110,7 @@ class AuthSubmitButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoading = authState.status == AuthStatus.loading;
+    final isLoading = authState is AuthLoading;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),

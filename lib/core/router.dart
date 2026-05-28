@@ -31,7 +31,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     redirect: (context, state) {
-      final isAuthenticated = authState.status == AuthStatus.authenticated;
+      final isAuthenticated = authState is AuthAuthenticated;
       final isOnLogin = state.matchedLocation == '/login';
       final isOnPlacement = state.matchedLocation == '/placement';
 

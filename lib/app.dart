@@ -16,7 +16,7 @@ class SpeakEngApp extends ConsumerWidget {
 
     // Khi auth state thay đổi → check placement status
     ref.listen<AuthState>(authProvider, (prev, next) {
-      if (next.status == AuthStatus.authenticated) {
+      if (next is AuthAuthenticated) {
         _checkPlacement(ref);
       }
     });
