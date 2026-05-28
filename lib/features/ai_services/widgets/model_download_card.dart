@@ -53,6 +53,25 @@ class _ModelDownloadCardState extends ConsumerState<ModelDownloadCard> {
   }
 
   Future<void> _startDownload() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Xác nhận tải xuống'),
+        content: const Text('Tải xuống ~30-40MB. Tiếp tục?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Tải'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
     setState(() {
       _state = _DownloadState.downloading;
       _progress = 0;

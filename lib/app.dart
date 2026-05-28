@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/router.dart';
 import 'core/theme.dart';
@@ -18,6 +19,7 @@ class SpeakEngApp extends ConsumerWidget {
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next is AuthAuthenticated) {
         _checkPlacement(ref);
+        _checkOnboarding(ref);
       }
     });
 
@@ -51,5 +53,12 @@ class SpeakEngApp extends ConsumerWidget {
       // Nếu lỗi, mặc định cho phép vào app
       ref.read(placementCompletedProvider.notifier).state = true;
     }
+  }
+
+  /// Kiểm tra trạng thái onboarding từ SharedPreferences.
+  Future<void> _checkOnboarding(WidgetRef ref) async {
+    final prefs = await SharedPreferences.getInstance();
+    final done = prefs.getBool('onboarding_done') ?? false;
+    ref.read(onboardingDoneProvider.notifier).state = done;
   }
 }

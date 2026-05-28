@@ -77,6 +77,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         child: Column(
           children: [
             Expanded(child: _buildChatList(state)),
+            if (state is ConversationSpeaking)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: Text(
+                  'Đến lượt bạn 🎤',
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
             ConversationBottomActions(
               hints: widget.scenario.hints,
               onRecord: () => _handleRecordPress(state),

@@ -8,6 +8,7 @@ import 'package:speakeng/features/auth/screens/auth_screen.dart';
 import 'package:speakeng/features/conversation/screens/conversation_screen.dart';
 import 'package:speakeng/features/conversation/screens/feedback_screen.dart';
 import 'package:speakeng/features/daily_flow/screens/daily_flow_screen.dart';
+import 'package:speakeng/features/onboarding/screens/onboarding_screen.dart';
 import 'package:speakeng/features/placement/screens/placement_screen.dart';
 import 'package:speakeng/features/progress/screens/progress_screen.dart';
 import 'package:speakeng/features/shadowing/screens/shadowing_screen.dart';
@@ -18,6 +19,11 @@ import 'package:speakeng/features/shadowing/screens/shadowing_screen.dart';
 /// Mặc định `null` khi đang loading.
 final placementCompletedProvider = StateProvider<bool?>((ref) => null);
 
+/// Provider kiểm tra trạng thái onboarding.
+///
+/// Trả về `true` nếu user đã xem onboarding, `false` nếu chưa.
+final onboardingDoneProvider = StateProvider<bool>((ref) => false);
+
 /// Provider cho GoRouter instance.
 ///
 /// Redirect logic:
@@ -27,6 +33,7 @@ final placementCompletedProvider = StateProvider<bool?>((ref) => null);
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
   final placementCompleted = ref.watch(placementCompletedProvider);
+  final onboardingDone = ref.watch(onboardingDoneProvider);
 
   return GoRouter(
     initialLocation: '/',
@@ -34,6 +41,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthenticated = authState is AuthAuthenticated;
       final isOnLogin = state.matchedLocation == '/login';
       final isOnPlacement = state.matchedLocation == '/placement';
+      final isOnOnboarding = state.matchedLocation == '/onboarding';
 
       // Chưa đăng nhập → redirect về /login
       if (!isAuthenticated && !isOnLogin) {
@@ -43,6 +51,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Đã đăng nhập mà đang ở /login → kiểm tra placement
       if (isAuthenticated && isOnLogin) {
         if (placementCompleted == false) return '/placement';
+        if (placementCompleted == true && !onboardingDone) {
+          return '/onboarding';
+        }
         return '/';
       }
 
@@ -56,6 +67,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/';
       }
 
+      // Đã placement, chưa onboarding → redirect về /onboarding
+      if (isAuthenticated &&
+          placementCompleted == true &&
+          !onboardingDone &&
+          !isOnOnboarding) {
+        return '/onboarding';
+      }
+
       return null;
     },
     routes: [
@@ -66,6 +85,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/placement',
         builder: (context, state) => const PlacementScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: '/',

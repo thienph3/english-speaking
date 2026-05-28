@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/shadowing/logic/phrase_splitter.dart';
@@ -27,9 +28,24 @@ class ShadowingBottomActions extends ConsumerWidget {
         const SizedBox(height: AppSpacing.sm),
         _buildActionButtons(ref, state),
         const SizedBox(height: AppSpacing.sm),
-        RecordingButton(
-          state: _mapRecordButtonState(state),
-          onPressed: () => _onRecordPressed(ref, state, phraseState),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (state is ShadowingLoaded || state is ShadowingResult)
+              TextButton(
+                onPressed: () => context.pop(),
+                child: Text(
+                  'Bỏ qua',
+                  style: AppTypography.button.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            RecordingButton(
+              state: _mapRecordButtonState(state),
+              onPressed: () => _onRecordPressed(ref, state, phraseState),
+            ),
+          ],
         ),
       ],
     );

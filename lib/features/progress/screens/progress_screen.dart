@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:speakeng/core/theme.dart';
+import 'package:speakeng/features/conversation/repositories/feedback_repository.dart';
 import 'package:speakeng/features/progress/providers/progress_provider.dart';
 import 'package:speakeng/features/progress/widgets/before_after_player.dart';
+import 'package:speakeng/features/progress/widgets/sentence_list_card.dart';
 import 'package:speakeng/shared/services/audio_service.dart';
+import 'package:speakeng/shared/widgets/empty_state.dart';
 
 /// Màn hình Progress Dashboard.
 ///
@@ -75,11 +79,23 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildMasteredCard(state),
-          const SizedBox(height: AppSpacing.md),
-          _buildAccuracyCard(state),
-          const SizedBox(height: AppSpacing.md),
-          _buildResponseTimeCard(state),
+          if (state.sentencesMastered == 0)
+            const EmptyState(
+              icon: Icons.emoji_events_outlined,
+              title: 'Chưa có dữ liệu',
+              subtitle: 'Hoàn thành bài luyện đầu tiên để xem tiến bộ!',
+            )
+          else ...[
+            _buildMasteredCard(state),
+            const SizedBox(height: AppSpacing.md),
+            _buildAccuracyCard(state),
+            const SizedBox(height: AppSpacing.md),
+            _buildResponseTimeCard(state),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          const SentenceListCard(),
+          const SizedBox(height: AppSpacing.lg),
+          _buildFeedbackHistoryButton(),
           const SizedBox(height: AppSpacing.lg),
           _buildBeforeAfterSection(),
         ],
@@ -128,6 +144,33 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     if (diff == 0) return 'Không thay đổi so với tuần trước';
     final sign = diff > 0 ? '+' : '';
     return '$sign${diff.toStringAsFixed(1)}$unit so với tuần trước';
+  }
+
+  Widget _buildFeedbackHistoryButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () async {
+          final feedbacks =
+              await ref.read(savedFeedbacksProvider.future);
+          if (!mounted) return;
+          if (feedbacks.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Chưa có feedback nào.')),
+            );
+            return;
+          }
+          context.push('/feedback', extra: {
+            'feedback': feedbacks.last,
+            'targetPhrases': <String>[],
+            'userTranscripts': <String>[],
+            'responseTimes': <int>[],
+          });
+        },
+        icon: const Icon(Icons.history),
+        label: const Text('Lịch sử feedback'),
+      ),
+    );
   }
 
   Widget _buildBeforeAfterSection() {
