@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:speakeng/core/constants.dart';
 import 'package:speakeng/core/exceptions.dart';
@@ -148,17 +150,32 @@ class ConversationNotifier extends StateNotifier<ConversationState> {
         return;
       }
 
+      // TTS: synthesize AI response audio
+      final audioPath = await _cacheAudio(aiResponse);
+
       state = ConversationState.speaking(
         scenario: scenario,
         messages: _repository.messages,
         turnCount: _repository.currentTurn,
         responseTimes: responseTimes,
-        cachedAudioPath: cachedAudioPath,
+        cachedAudioPath: audioPath,
       );
 
       _lastAiFinishTime = DateTime.now();
     } on AppError catch (e) {
       _setError(e.userMessage, scenario, responseTimes, cachedAudioPath);
+    }
+  }
+
+  Future<String?> _cacheAudio(String text) async {
+    try {
+      final bytes = await _repository.textToSpeech(text);
+      final dir = await getTemporaryDirectory();
+      final path = '${dir.path}/conv_tts_${DateTime.now().millisecondsSinceEpoch}.wav';
+      await File(path).writeAsBytes(bytes);
+      return path;
+    } catch (_) {
+      return null;
     }
   }
 

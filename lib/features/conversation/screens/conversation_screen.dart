@@ -54,6 +54,13 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final turnCount = _getTurnCount(state);
     final maxTurns = AppConstants.maxConversationTurns;
 
+    // Play TTS audio when AI finishes responding
+    ref.listen<ConversationState>(conversationProvider, (prev, next) {
+      if (next is ConversationSpeaking && next.cachedAudioPath != null) {
+        _playTtsAudio(next.cachedAudioPath!);
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -198,6 +205,12 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         );
       }
     });
+  }
+
+  Future<void> _playTtsAudio(String path) async {
+    await _audioService.loadAudio(path);
+    await _audioService.play();
+    _scrollToBottom();
   }
 
   int _getTurnCount(ConversationState state) {
