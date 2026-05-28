@@ -4,23 +4,10 @@
     "situation": "You are at a coffee shop and want to order a drink.",
     "ai_role": "barista",
     "first_message": "Hi there! Welcome to our coffee shop. What can I get for you today?",
-    "target_phrases": [
-      "I'd like",
-      "Could I have",
-      "What do you recommend",
-      "To go please"
-    ],
-    "target_grammar": [
-      "polite requests with could/would",
-      "countable/uncountable nouns"
-    ],
+    "target_phrases": ["I'd like", "Could I have", "What do you recommend", "To go please"],
+    "target_grammar": ["polite requests with could/would", "countable/uncountable nouns"],
     "max_turns": 5,
-    "hints": [
-      "Try ordering with 'I'd like a...' or 'Could I have a...'",
-      "Ask about sizes: small, medium, large",
-      "You can ask 'What do you recommend?'",
-      "Say 'To go please' or 'For here please'"
-    ],
+    "hints": ["Try ordering with 'I'd like a...' or 'Could I have a...'", "Ask about sizes: small, medium, large", "You can ask 'What do you recommend?'", "Say 'To go please' or 'For here please'"],
     "system_prompt": "You are a friendly barista at a coffee shop. Keep responses short (1-2 sentences). Use simple English. Offer choices when appropriate. If the customer seems unsure, suggest popular items. End the conversation naturally after taking the order."
   },
   {
@@ -28,24 +15,10 @@
     "situation": "You are lost and need to ask a local person for directions to the nearest subway station.",
     "ai_role": "local person",
     "first_message": "Oh hi! You look a bit lost. Can I help you find something?",
-    "target_phrases": [
-      "Excuse me",
-      "How do I get to",
-      "Is it far from here",
-      "Turn left",
-      "Turn right"
-    ],
-    "target_grammar": [
-      "question forms with how/where",
-      "prepositions of direction"
-    ],
+    "target_phrases": ["Excuse me", "How do I get to", "Is it far from here", "Turn left", "Turn right"],
+    "target_grammar": ["question forms with how/where", "prepositions of direction"],
     "max_turns": 5,
-    "hints": [
-      "Start with 'Excuse me, how do I get to...'",
-      "Ask 'Is it far from here?'",
-      "Confirm directions: 'So I turn left at...'",
-      "Thank them: 'Thank you so much!'"
-    ],
+    "hints": ["Start with 'Excuse me, how do I get to...'", "Ask 'Is it far from here?'", "Confirm directions: 'So I turn left at...'", "Thank them: 'Thank you so much!'"],
     "system_prompt": "You are a friendly local person giving directions. Keep responses short (1-2 sentences). Use simple directional language (turn left, turn right, go straight, walk for 5 minutes). If the person seems confused, offer to repeat or simplify. The subway station is about a 5-minute walk away."
   },
   {
@@ -53,23 +26,87 @@
     "situation": "You are at a job interview for a junior developer position.",
     "ai_role": "interviewer",
     "first_message": "Good morning! Thank you for coming in today. Please have a seat. Can you start by telling me a little about yourself?",
-    "target_phrases": [
-      "I have experience in",
-      "I'm passionate about",
-      "My strength is",
-      "I'm looking forward to"
-    ],
-    "target_grammar": [
-      "present perfect for experience",
-      "future tense for goals"
-    ],
+    "target_phrases": ["I have experience in", "I'm passionate about", "My strength is", "I'm looking forward to"],
+    "target_grammar": ["present perfect for experience", "future tense for goals"],
     "max_turns": 5,
-    "hints": [
-      "Introduce yourself: 'I have experience in...'",
-      "Show enthusiasm: 'I'm passionate about...'",
-      "Highlight strengths: 'My strength is...'",
-      "Express interest: 'I'm looking forward to...'"
-    ],
+    "hints": ["Introduce yourself: 'I have experience in...'", "Show enthusiasm: 'I'm passionate about...'", "Highlight strengths: 'My strength is...'", "Express interest: 'I'm looking forward to...'"],
     "system_prompt": "You are a friendly interviewer for a junior developer position. Keep responses short (1-2 sentences). Ask simple follow-up questions about experience, skills, and motivation. Be encouraging and supportive. Ask about: background, skills, why this company, and future goals. End positively."
+  },
+  {
+    "id": "small_talk",
+    "situation": "You meet your new neighbor in the elevator and want to make small talk.",
+    "ai_role": "neighbor",
+    "first_message": "Hey! I think you just moved in next door, right? I'm Alex. Nice to meet you!",
+    "target_phrases": ["Nice to meet you", "I just moved in", "How long have you lived here", "We should hang out sometime"],
+    "target_grammar": ["present perfect for duration", "simple past for recent events"],
+    "max_turns": 5,
+    "hints": ["Introduce yourself: 'Nice to meet you, I'm...'", "Ask about the area: 'How long have you lived here?'", "Ask for recommendations: 'Any good restaurants nearby?'", "End friendly: 'We should hang out sometime!'"],
+    "system_prompt": "You are a friendly neighbor named Alex meeting someone new in your apartment building. Keep responses short (1-2 sentences). Be warm and welcoming. Share small details about the neighborhood. Ask casual questions about where they're from and what they do. Keep it light and friendly."
+  },
+  {
+    "id": "shopping",
+    "situation": "You are at a clothing store looking for a gift for a friend's birthday.",
+    "ai_role": "shop assistant",
+    "first_message": "Hello! Welcome to our store. Are you looking for something specific today?",
+    "target_phrases": ["I'm looking for", "Do you have this in", "How much is", "I'll take it"],
+    "target_grammar": ["present continuous for current actions", "questions about price and availability"],
+    "max_turns": 5,
+    "hints": ["Say what you need: 'I'm looking for a gift for...'", "Ask about options: 'Do you have this in a different color?'", "Ask price: 'How much is this?'", "Decide: 'I'll take it' or 'I'll think about it'"],
+    "system_prompt": "You are a helpful shop assistant at a clothing store. Keep responses short (1-2 sentences). Suggest items, offer sizes and colors. Mention prices when asked ($20-50 range). Be helpful but not pushy. If they seem unsure, suggest alternatives."
+  },
+  {
+    "id": "phone_call",
+    "situation": "You need to call a restaurant to make a dinner reservation for tonight.",
+    "ai_role": "restaurant host",
+    "first_message": "Good afternoon, Bella's Restaurant. How can I help you?",
+    "target_phrases": ["I'd like to make a reservation", "A table for", "Is there availability", "Could you confirm"],
+    "target_grammar": ["would like for polite requests", "time expressions"],
+    "max_turns": 5,
+    "hints": ["Start: 'I'd like to make a reservation for tonight'", "Specify: 'A table for two, please'", "Give time: 'Around 7 o'clock'", "Confirm: 'Could you confirm that's for...'"],
+    "system_prompt": "You are a restaurant host answering the phone. Keep responses short (1-2 sentences). Ask about party size, preferred time, and name for the reservation. Tonight is Friday and you have availability at 7pm and 8:30pm. Confirm the booking details at the end."
+  },
+  {
+    "id": "meeting_opinions",
+    "situation": "You are in a team meeting and need to share your opinion about a new project idea.",
+    "ai_role": "team lead",
+    "first_message": "Alright team, we're thinking about redesigning our mobile app. What does everyone think? Any initial thoughts?",
+    "target_phrases": ["I think we should", "In my opinion", "I agree with", "What if we"],
+    "target_grammar": ["expressing opinions with I think/believe", "conditional suggestions with what if"],
+    "max_turns": 5,
+    "hints": ["Share opinion: 'I think we should focus on...'", "Agree or disagree: 'I agree, but what about...'", "Suggest: 'What if we start with...'", "Summarize: 'So the main priority is...'"],
+    "system_prompt": "You are a friendly team lead in a casual meeting about redesigning a mobile app. Keep responses short (1-2 sentences). Ask follow-up questions about their ideas. React positively to suggestions. Bring up considerations like timeline and user feedback. Keep the tone collaborative, not formal."
+  },
+  {
+    "id": "hotel_checkin",
+    "situation": "You just arrived at a hotel after a long flight and need to check in.",
+    "ai_role": "hotel receptionist",
+    "first_message": "Good evening and welcome! Do you have a reservation with us?",
+    "target_phrases": ["I have a reservation under", "Could I get a room with", "What time is", "Is breakfast included"],
+    "target_grammar": ["have for possession/booking", "polite questions with could"],
+    "max_turns": 5,
+    "hints": ["Confirm booking: 'I have a reservation under the name...'", "Ask about room: 'Could I get a room with a view?'", "Ask about facilities: 'What time is checkout?'", "Ask: 'Is breakfast included?'"],
+    "system_prompt": "You are a friendly hotel receptionist. Keep responses short (1-2 sentences). Confirm their reservation, ask for ID, mention the room number (405), checkout time (11am), and that breakfast is from 7-10am. Offer to help with luggage. Be warm and professional."
+  },
+  {
+    "id": "making_friends",
+    "situation": "You are at a language exchange meetup and want to introduce yourself and make friends.",
+    "ai_role": "fellow attendee",
+    "first_message": "Hi! Is this your first time at this meetup? I'm Sarah. I've been coming here for a few months.",
+    "target_phrases": ["This is my first time", "I'm trying to improve", "What do you do", "Would you like to practice together"],
+    "target_grammar": ["present continuous for current goals", "would like for suggestions"],
+    "max_turns": 5,
+    "hints": ["Introduce: 'This is my first time here. I'm trying to improve my English'", "Ask about them: 'What do you do for work?'", "Find common ground: 'Oh, I'm interested in that too!'", "Suggest: 'Would you like to practice together sometime?'"],
+    "system_prompt": "You are Sarah, a friendly person at a language exchange meetup. You're learning Vietnamese and work as a graphic designer. Keep responses short (1-2 sentences). Ask about their job, hobbies, and why they're learning English. Be encouraging about their English. Suggest exchanging contact info at the end."
+  },
+  {
+    "id": "describe_day",
+    "situation": "Your English tutor asks you to describe what you did yesterday.",
+    "ai_role": "English tutor",
+    "first_message": "So, tell me about your day yesterday! What did you do? Start from the morning.",
+    "target_phrases": ["First I", "After that I", "In the evening", "It was really"],
+    "target_grammar": ["simple past tense", "time sequencing words"],
+    "max_turns": 5,
+    "hints": ["Start: 'First, I woke up at...'", "Sequence: 'After that, I went to...'", "Evening: 'In the evening, I...'", "React: 'It was really fun/tiring/interesting'"],
+    "system_prompt": "You are a friendly English tutor. Keep responses short (1-2 sentences). Ask follow-up questions about their day to keep them talking. Show interest with reactions like 'That sounds nice!' or 'Oh really?'. Gently encourage more detail. Focus on getting them to use past tense and sequencing words."
   }
 ]
