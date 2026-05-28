@@ -2,13 +2,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_flow_provider.dart';
 import 'package:speakeng/features/daily_flow/providers/daily_flow_state.dart';
+import 'package:speakeng/shared/services/prefs_service.dart';
 
 void main() {
   group('DailyFlowNotifier', () {
     late DailyFlowNotifier notifier;
 
-    setUp(() {
+    setUp(() async {
       SharedPreferences.setMockInitialValues({});
+      await PrefsService.initialize();
       notifier = DailyFlowNotifier();
     });
 

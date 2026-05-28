@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:speakeng/features/ai_services/models/service_types.dart';
+import 'package:speakeng/shared/services/prefs_service.dart';
 
 const _quotaKey = 'quota_usage';
 const _quotaResetKey = 'quota_reset_date';
@@ -15,7 +14,7 @@ class QuotaTracker {
   /// Load persisted usage from SharedPreferences.
   Future<void> load() async {
     if (_loaded) return;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = PrefsService.instance;
 
     // Reset if cycle has passed
     final resetDate = prefs.getString(_quotaResetKey);
@@ -68,7 +67,7 @@ class QuotaTracker {
   }
 
   Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = PrefsService.instance;
     await prefs.setString(_quotaKey, jsonEncode(_usage));
   }
 }

@@ -9,6 +9,7 @@ import 'package:speakeng/features/ai_services/logic/provider_registry.dart';
 import 'package:speakeng/features/ai_services/logic/quota_tracker.dart';
 import 'package:speakeng/features/ai_services/models/service_types.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/llm_provider.dart';
+import 'package:speakeng/features/ai_services/providers/interfaces/has_provider_info.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/pronunciation_provider.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/stt_provider.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/tts_provider.dart';
@@ -157,26 +158,22 @@ class AiOrchestrator {
     );
   }
 
-  List<T> _getChain<T>(ServiceType type) {
+  List<T> _getChain<T extends HasProviderInfo>(ServiceType type) {
     var providers = _registry.getAvailable<T>(type);
 
     if (!isOnline) {
-      providers = providers.where((p) {
-        final info = (p as dynamic).info as ProviderInfo;
-        return info.isOffline;
-      }).toList();
+      providers = providers.where((p) => p.info.isOffline).toList();
     }
 
     providers = providers.where((p) {
-      final info = (p as dynamic).info as ProviderInfo;
-      return !quotaTracker.isExceeded(info);
+      return !quotaTracker.isExceeded(p.info);
     }).toList();
 
     return FallbackChain.sort<T>(
       providers: providers,
       strategy: strategy,
       isOnline: isOnline,
-      getInfo: (p) => (p as dynamic).info as ProviderInfo,
+      getInfo: (p) => p.info,
     );
   }
 }

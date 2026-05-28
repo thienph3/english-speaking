@@ -1,10 +1,7 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:speakeng/core/api_call_helper.dart';
 import 'package:speakeng/core/constants.dart';
-import 'package:speakeng/core/exceptions.dart';
 import 'package:speakeng/features/ai_services/models/service_types.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/llm_provider.dart';
 
@@ -27,7 +24,7 @@ class SupabaseLlmProvider implements LlmProvider {
     required List<Map<String, String>> messages,
     required String systemPrompt,
   }) async {
-    try {
+    return ApiCallHelper.execute(() async {
       final response = await _supabase.functions
           .invoke('chat', body: {
             'messages': messages,
@@ -39,10 +36,6 @@ class SupabaseLlmProvider implements LlmProvider {
       final choices = data['choices'] as List<dynamic>;
       final message = choices[0]['message'] as Map<String, dynamic>;
       return message['content'] as String;
-    } on TimeoutException {
-      throw const ApiTimeoutError();
-    } on SocketException {
-      throw const NetworkError();
-    }
+    });
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:speakeng/features/ai_services/models/service_types.dart';
+import 'package:speakeng/features/ai_services/providers/interfaces/has_provider_info.dart';
 import 'package:speakeng/features/shadowing/models/pronunciation_result.dart';
 
 /// Mức độ chi tiết của kết quả pronunciation.
@@ -20,8 +20,7 @@ class PronunciationResponse {
 }
 
 /// Interface cho Pronunciation Assessment provider.
-abstract class PronunciationProvider {
-  ProviderInfo get info;
+abstract class PronunciationProvider extends HasProviderInfo {
 
   /// Đánh giá phát âm từ audio bytes + reference text.
   Future<PronunciationResponse> assess({

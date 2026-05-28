@@ -1,11 +1,9 @@
-import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:speakeng/core/api_call_helper.dart';
 import 'package:speakeng/core/constants.dart';
-import 'package:speakeng/core/exceptions.dart';
 import 'package:speakeng/features/ai_services/models/service_types.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/stt_provider.dart';
 
@@ -27,17 +25,13 @@ class SupabaseSttProvider implements SttProvider {
 
   @override
   Future<String> transcribe(Uint8List audio) async {
-    try {
+    return ApiCallHelper.execute(() async {
       final response = await _supabase.functions
           .invoke('transcribe', body: {'audio': audio.toList()})
           .timeout(AppConstants.apiTimeoutDuration);
 
       final data = response.data as Map<String, dynamic>;
       return data['text'] as String;
-    } on TimeoutException {
-      throw const ApiTimeoutError();
-    } on SocketException {
-      throw const NetworkError();
-    }
+    });
   }
 }

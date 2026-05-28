@@ -1,11 +1,9 @@
-import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:speakeng/core/api_call_helper.dart';
 import 'package:speakeng/core/constants.dart';
-import 'package:speakeng/core/exceptions.dart';
 import 'package:speakeng/features/ai_services/models/service_types.dart';
 import 'package:speakeng/features/ai_services/providers/interfaces/pronunciation_provider.dart';
 import 'package:speakeng/features/shadowing/models/pronunciation_result.dart';
@@ -31,7 +29,7 @@ class SupabasePronunciationProvider implements PronunciationProvider {
     required Uint8List audio,
     required String referenceText,
   }) async {
-    try {
+    return ApiCallHelper.execute(() async {
       final response = await _supabase.functions
           .invoke('pronounce', body: {
             'audio': audio.toList(),
@@ -47,11 +45,7 @@ class SupabasePronunciationProvider implements PronunciationProvider {
         detail: PronunciationDetail.phonemeLevel,
         providerId: info.id,
       );
-    } on TimeoutException {
-      throw const ApiTimeoutError();
-    } on SocketException {
-      throw const NetworkError();
-    }
+    });
   }
 
   PronunciationResult _parseResponse(Map<String, dynamic> data) {

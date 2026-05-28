@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:speakeng/features/ai_services/logic/provider_registry.dart';
 import 'package:speakeng/features/ai_services/models/service_types.dart';
+import 'package:speakeng/features/ai_services/providers/interfaces/has_provider_info.dart';
 
 void main() {
   late ProviderRegistry registry;
@@ -70,7 +71,7 @@ void main() {
   });
 }
 
-class _FakeProvider {
+class _FakeProvider implements HasProviderInfo {
   _FakeProvider(
     String id,
     ServiceType type, {
@@ -83,5 +84,6 @@ class _FakeProvider {
           status: status,
         );
 
+  @override
   final ProviderInfo info;
 }

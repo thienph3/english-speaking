@@ -7,12 +7,14 @@ import 'package:sherpa_onnx/sherpa_onnx.dart' as sherpa;
 
 import 'app.dart';
 import 'features/ai_services/logic/quota_tracker.dart';
+import 'shared/services/prefs_service.dart';
 import 'shared/services/supabase_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sherpa.initBindings();
   await SupabaseService.initialize();
+  await PrefsService.initialize();
 
   // Initialize quota tracker early so UI shows correct values
   await QuotaTracker().load();

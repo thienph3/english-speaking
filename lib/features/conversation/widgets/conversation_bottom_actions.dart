@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:speakeng/core/theme.dart';
+import 'package:speakeng/features/conversation/logic/conversation_state_helpers.dart';
 import 'package:speakeng/features/conversation/providers/conversation_provider.dart';
 import 'package:speakeng/features/conversation/providers/conversation_state.dart';
 import 'package:speakeng/shared/widgets/recording_button.dart';
@@ -37,7 +38,7 @@ class ConversationBottomActions extends ConsumerWidget {
   }
 
   Widget _buildHintButton(BuildContext context, ConversationState state) {
-    final turnCount = _getTurnCount(state);
+    final turnCount = state.turnCount;
     final hintIndex = turnCount.clamp(0, hints.length - 1);
 
     return TextButton.icon(
@@ -68,18 +69,6 @@ class ConversationBottomActions extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  int _getTurnCount(ConversationState state) {
-    return switch (state) {
-      ConversationRecording(turnCount: final t) => t,
-      ConversationTranscribing(turnCount: final t) => t,
-      ConversationThinking(turnCount: final t) => t,
-      ConversationSpeaking(turnCount: final t) => t,
-      ConversationCompleted(turnCount: final t) => t,
-      ConversationError(turnCount: final t) => t,
-      _ => 0,
-    };
   }
 
   RecordingButtonState _getRecordingButtonState(ConversationState state) {

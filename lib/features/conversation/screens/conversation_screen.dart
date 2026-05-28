@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:speakeng/core/constants.dart';
 import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/conversation/models/scenario.dart';
+import 'package:speakeng/features/conversation/logic/conversation_state_helpers.dart';
 import 'package:speakeng/features/conversation/providers/conversation_provider.dart';
 import 'package:speakeng/features/conversation/providers/conversation_state.dart';
 import 'package:speakeng/features/conversation/widgets/chat_bubble.dart';
@@ -48,7 +49,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(conversationProvider);
-    final turnCount = _getTurnCount(state);
+    final turnCount = state.turnCount;
 
     ref.listen<ConversationState>(conversationProvider, (prev, next) {
       if (next is ConversationSpeaking && next.cachedAudioPath != null) {
@@ -98,9 +99,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   }
 
   Widget _buildChatList(ConversationState state) {
-    final messages = _getMessages(state);
-    final showTyping =
-        state is ConversationTranscribing || state is ConversationThinking;
+    final messages = state.messages;
+    final showTyping = state.isTyping;
 
     return ListView.builder(
       controller: _scrollController,
@@ -158,29 +158,5 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     await _audioService.loadAudio(path);
     await _audioService.play();
     _scrollToBottom();
-  }
-
-  int _getTurnCount(ConversationState state) {
-    return switch (state) {
-      ConversationRecording(turnCount: final t) => t,
-      ConversationTranscribing(turnCount: final t) => t,
-      ConversationThinking(turnCount: final t) => t,
-      ConversationSpeaking(turnCount: final t) => t,
-      ConversationCompleted(turnCount: final t) => t,
-      ConversationError(turnCount: final t) => t,
-      _ => 0,
-    };
-  }
-
-  List<Map<String, String>> _getMessages(ConversationState state) {
-    return switch (state) {
-      ConversationRecording(messages: final m) => m,
-      ConversationTranscribing(messages: final m) => m,
-      ConversationThinking(messages: final m) => m,
-      ConversationSpeaking(messages: final m) => m,
-      ConversationCompleted(messages: final m) => m,
-      ConversationError(messages: final m) => m,
-      _ => [],
-    };
   }
 }

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:speakeng/features/daily_flow/providers/daily_flow_state.dart';
+import 'package:speakeng/shared/services/prefs_service.dart';
 
 const _key = 'daily_flow_state';
 const _dateKey = 'daily_flow_date';
@@ -24,7 +24,7 @@ class DailyFlowNotifier extends StateNotifier<DailyFlowState> {
   /// Khôi phục state từ SharedPreferences.
   /// Reset nếu ngày đã thay đổi.
   Future<void> restore() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = PrefsService.instance;
     final savedDate = prefs.getString(_dateKey);
     final today = _todayString();
 
@@ -89,7 +89,7 @@ class DailyFlowNotifier extends StateNotifier<DailyFlowState> {
   }
 
   Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = PrefsService.instance;
     await prefs.setString(_dateKey, _todayString());
     await prefs.setString(_key, jsonEncode({
       'sc': state.shadowingCompleted,
