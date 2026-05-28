@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:speakeng/features/ai_services/screens/settings_screen.dart';
 import 'package:speakeng/features/auth/providers/auth_provider.dart';
 import 'package:speakeng/features/auth/screens/auth_screen.dart';
 import 'package:speakeng/features/conversation/screens/conversation_screen.dart';
@@ -99,6 +100,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             onDone: () => context.go('/'),
           );
         },
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );

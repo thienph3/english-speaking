@@ -1,97 +1,55 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:speakeng/core/constants.dart';
-import 'package:speakeng/core/exceptions.dart';
+import 'package:speakeng/features/ai_services/providers/interfaces/pronunciation_provider.dart';
+import 'package:speakeng/features/ai_services/providers/orchestrator_provider.dart';
 import 'package:speakeng/features/shadowing/models/pronunciation_result.dart';
-import 'package:speakeng/shared/services/supabase_service.dart';
 
 /// Provider cho [ShadowingRepository].
 final shadowingRepositoryProvider = Provider<ShadowingRepository>((ref) {
-  return ShadowingRepository(ref.read(supabaseProvider));
+  return ShadowingRepository(ref.watch(orchestratorProvider));
 });
 
-/// Repository gọi Edge Function /pronounce để đánh giá phát âm.
+/// Repository gọi Orchestrator để đánh giá phát âm.
 ///
-/// Gửi audio file + reference_text dưới dạng FormData,
-/// parse response thành [PronunciationResult].
+/// Orchestrator tự động chọn provider phù hợp (Azure Speech online
+/// hoặc wav2vec2 offline) dựa trên connectivity và strategy.
 class ShadowingRepository {
-  ShadowingRepository(this._supabase);
+  ShadowingRepository(this._orchestrator);
 
-  final SupabaseClient _supabase;
+  final AiOrchestrator _orchestrator;
 
-  /// Gửi audio đến Edge Function /pronounce và trả về kết quả.
+  /// Gửi audio đến Orchestrator và trả về kết quả pronunciation.
   ///
-  /// Throws [ApiTimeoutError] nếu timeout > 10 giây.
-  /// Throws [NetworkError] nếu mất kết nối.
+  /// [audioPath] — đường dẫn file WAV đã ghi.
+  /// [referenceText] — câu gốc để so sánh.
   Future<PronunciationResult> pronounce({
     required String audioPath,
     required String referenceText,
   }) async {
-    try {
-      final audioBytes = await File(audioPath).readAsBytes();
+    final audioBytes = await File(audioPath).readAsBytes();
 
-      final response = await _supabase.functions
-          .invoke(
-            'pronounce',
-            body: {
-              'audio': audioBytes,
-              'reference_text': referenceText,
-            },
-          )
-          .timeout(AppConstants.apiTimeoutDuration);
-
-      return _parseResponse(response.data as Map<String, dynamic>);
-    } on TimeoutException {
-      throw const ApiTimeoutError();
-    } on SocketException {
-      throw const NetworkError();
-    }
-  }
-
-  /// Parse Azure Speech response thành [PronunciationResult].
-  PronunciationResult _parseResponse(Map<String, dynamic> data) {
-    final nBest = (data['NBest'] as List).first as Map<String, dynamic>;
-    final assessment =
-        nBest['PronunciationAssessment'] as Map<String, dynamic>;
-    final wordsJson = nBest['Words'] as List;
-
-    return PronunciationResult(
-      accuracyScore: (assessment['AccuracyScore'] as num).toDouble(),
-      fluencyScore: (assessment['FluencyScore'] as num).toDouble(),
-      completenessScore:
-          (assessment['CompletenessScore'] as num).toDouble(),
-      words: wordsJson.map(_parseWord).toList(),
+    final response = await _orchestrator.assess(
+      audio: audioBytes,
+      referenceText: referenceText,
     );
+
+    return response.result;
   }
 
-  /// Parse một word từ Azure response.
-  WordResult _parseWord(dynamic wordJson) {
-    final word = wordJson as Map<String, dynamic>;
-    final assessment =
-        word['PronunciationAssessment'] as Map<String, dynamic>;
-    final phonemesJson = (word['Phonemes'] as List?) ?? [];
+  /// Kiểm tra kết quả có phoneme-level detail không.
+  ///
+  /// Nếu dùng offline provider (wav2vec2), chỉ có word-level.
+  Future<PronunciationResponse> pronounceWithDetail({
+    required String audioPath,
+    required String referenceText,
+  }) async {
+    final audioBytes = await File(audioPath).readAsBytes();
 
-    return WordResult(
-      word: word['Word'] as String,
-      accuracyScore: (assessment['AccuracyScore'] as num).toDouble(),
-      errorType: assessment['ErrorType'] as String?,
-      phonemes: phonemesJson.map(_parsePhoneme).toList(),
-    );
-  }
-
-  /// Parse một phoneme từ Azure response.
-  PhonemeResult _parsePhoneme(dynamic phonemeJson) {
-    final phoneme = phonemeJson as Map<String, dynamic>;
-    final assessment =
-        phoneme['PronunciationAssessment'] as Map<String, dynamic>;
-
-    return PhonemeResult(
-      phoneme: phoneme['Phoneme'] as String,
-      accuracyScore: (assessment['AccuracyScore'] as num).toDouble(),
+    return _orchestrator.assess(
+      audio: audioBytes,
+      referenceText: referenceText,
     );
   }
 }
