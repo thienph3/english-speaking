@@ -82,6 +82,8 @@ class ShadowingBottomActions extends ConsumerWidget {
     };
   }
 
+  String? _currentRecordingPath;
+
   void _onRecordPressed(
     WidgetRef ref,
     ShadowingState state,
@@ -90,12 +92,20 @@ class ShadowingBottomActions extends ConsumerWidget {
     final notifier = ref.read(shadowingProvider.notifier);
     switch (state) {
       case ShadowingLoaded() || ShadowingPlaying():
-        notifier.startRecording();
-      case ShadowingRecording():
         () async {
           final dir = await getTemporaryDirectory();
-          final path = '${dir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
-          notifier.stopAndSubmit(path);
+          _currentRecordingPath = '${dir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
+          final audioService = ref.read(shadowingAudioProvider);
+          await audioService.startRecording(_currentRecordingPath!);
+          notifier.startRecording();
+        }();
+      case ShadowingRecording():
+        () async {
+          final audioService = ref.read(shadowingAudioProvider);
+          await audioService.stopRecording();
+          if (_currentRecordingPath != null) {
+            notifier.stopAndSubmit(_currentRecordingPath!);
+          }
         }();
         if (phraseState.isEnabled && !phraseState.isFullSentenceMode) {
           ref.read(phraseModeProvider.notifier).advanceToNextPhrase();
