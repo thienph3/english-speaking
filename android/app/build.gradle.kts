@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.speakeng.app"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
