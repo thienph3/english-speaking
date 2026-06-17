@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:speakeng/core/theme.dart';
 import 'package:speakeng/features/shadowing/logic/phrase_splitter.dart';
@@ -91,7 +92,11 @@ class ShadowingBottomActions extends ConsumerWidget {
       case ShadowingLoaded() || ShadowingPlaying():
         notifier.startRecording();
       case ShadowingRecording():
-        notifier.stopAndSubmit('/tmp/recording.wav');
+        () async {
+          final dir = await getTemporaryDirectory();
+          final path = '${dir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
+          notifier.stopAndSubmit(path);
+        }();
         if (phraseState.isEnabled && !phraseState.isFullSentenceMode) {
           ref.read(phraseModeProvider.notifier).advanceToNextPhrase();
         }

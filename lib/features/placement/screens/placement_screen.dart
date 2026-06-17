@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:speakeng/core/router.dart';
 import 'package:speakeng/core/theme.dart';
@@ -151,8 +152,9 @@ class _PlacementScreenState extends ConsumerState<PlacementScreen> {
       final path = await _audioService.stopRecording();
       if (path != null) await notifier.submitRecording(path);
     } else {
+      final dir = await getTemporaryDirectory();
       final path =
-          '/tmp/placement_${DateTime.now().millisecondsSinceEpoch}.wav';
+          '${dir.path}/placement_${DateTime.now().millisecondsSinceEpoch}.wav';
       await _audioService.startRecording(path);
       notifier.startRecording();
     }
