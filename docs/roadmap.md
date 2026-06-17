@@ -4,7 +4,7 @@
 
 ---
 
-## Current Status (2026-05-09)
+## Current Status (2026-06-17)
 
 ### ✅ Code — Done
 
@@ -20,8 +20,13 @@
 | Progress Dashboard | ✅ | Mastery count, accuracy, response time, week comparison |
 | Before/After recordings | ✅ | Supabase Storage upload/download |
 | Error handling | ✅ | Offline banner, timeout retry, audio validation |
+| AI Service Orchestrator | ✅ | Online/offline fallback, quota tracking, provider selection |
+| Offline TTS/STT (sherpa_onnx) | ✅ | Piper VITS + Whisper tiny, model download UI |
+| Onboarding screen | ✅ | Feature introduction for new users |
 | Supabase Edge Functions (4) | ✅ | /pronounce, /transcribe, /chat, /tts |
-| Database schema (SQL migrations) | ✅ | recordings, sentence_progress, daily_metrics, user_profiles |
+| Database schema (SQL migrations) | ✅ | recordings, sentence_progress, daily_metrics, user_profiles, api_usage |
+| Tests (184 passing) | ✅ | Unit, widget, state machine, router, orchestrator integration |
+| Deployment scripts | ✅ | setup.sh, build.sh, run.sh (macOS + Windows) |
 
 ### ✅ Content — Done
 
@@ -133,12 +138,14 @@ Placement scoring: avg ≥ 80% → medium/hard, 50–79% → easy/medium, < 50% 
 
 ## Next Steps (to ship MVP)
 
-1. **Setup accounts**: Supabase, Azure Speech, OpenAI, ElevenLabs (free)
-2. **Generate voices**: `python3 scripts/generate_voices.py`
-3. **Run migrations**: Deploy SQL to Supabase
-4. **Deploy Edge Functions**: `supabase functions deploy`
-5. **Build APK**: `flutter build apk`
-6. **Test on device**: Validate full flow end-to-end
+> See [docs/deployment.md](deployment.md) for detailed instructions.
+
+1. **Setup accounts** (~15 min): Supabase, Azure Speech, OpenAI, ElevenLabs (free)
+2. **Deploy backend** (~10 min): `supabase db push` + `supabase functions deploy`
+3. **Generate voices** (~10 min): `python3 scripts/generate_voices.py`
+4. **Build APK** (~5 min): `flutter build apk --release`
+5. **Test on device** (~10 min): Full daily flow end-to-end
+6. **Distribute to beta testers** (50 users)
 
 ---
 

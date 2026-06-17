@@ -1,217 +1,257 @@
 # Deployment Guide — SpeakEng
 
+## Overview
+
+SpeakEng is code-complete. This guide covers deploying the backend and building the APK.
+
+**Time estimate:** ~50 minutes (excluding account creation wait times)
+
+**Architecture:**
+```
+Flutter App (Android)
+    ↓ HTTPS
+Supabase Edge Functions (4)
+    ↓
+├── Azure Speech (pronunciation assessment)
+├── OpenAI Whisper (speech-to-text)
+├── OpenAI GPT-4o-mini (AI conversation)
+├── OpenAI TTS (conversation voice)
+└── Supabase (auth, DB, storage)
+```
+
+**Offline fallback:** App uses sherpa_onnx (Piper TTS + Whisper tiny) when network unavailable.
+
+---
+
 ## Quick Start (Scripted)
 
-> **Note:** You must manually create accounts and get API keys first (see Step 3 below).
-> The scripts automate deployment *after* you have credentials.
+```bash
+# 1. Create accounts and get API keys (see Step 1 below)
+
+# 2. Run setup script
+./scripts/setup.sh        # Creates .env template on first run
+
+# 3. Fill .env with your credentials
+
+# 4. Run setup again to deploy
+./scripts/setup.sh        # Deploys migrations + edge functions
+
+# 5. Generate voice files
+pip install elevenlabs
+python3 scripts/generate_voices.py
+
+# 6. Build APK
+./scripts/build.sh
+```
+
+---
+
+## Step-by-Step (Manual)
+
+### Step 1: Create Accounts (15 min)
+
+| Service | Purpose | Free Tier | Required? |
+|---------|---------|-----------|-----------|
+| [Supabase](https://supabase.com) | Auth, DB, Storage, Edge Functions | 500MB DB, 1GB storage | **Yes** |
+| [Azure Speech](https://portal.azure.com) | Phoneme-level pronunciation scoring | 5 hours/month | Optional* |
+| [OpenAI](https://platform.openai.com) | Whisper STT + GPT-4o-mini + TTS | Pay-as-you-go | Optional* |
+| [ElevenLabs](https://elevenlabs.io) | Pre-generate shadowing audio | 10,000 chars/month | Optional* |
+
+*Without Azure: shadowing works but no accuracy scoring.
+*Without OpenAI: conversation feature disabled, shadowing still works.
+*Without ElevenLabs: app uses offline Piper TTS for reference audio.
+
+#### Supabase Setup
+1. New Project → note **Project URL** and **Anon Key** (Settings → API)
+2. Note **Service Role Key** (Settings → API → service_role)
+3. Note **Project Ref** (from URL: `https://PROJECT_REF.supabase.co`)
+4. Storage → New Bucket → Name: `recordings` → Public: No
+
+#### Azure Speech Setup
+1. Azure Portal → Create "Speech Services" resource → **Free F0** tier
+2. Note **Endpoint** (e.g., `https://eastus.api.cognitive.microsoft.com`)
+3. Note **Key 1**
+
+#### OpenAI Setup
+1. platform.openai.com → API Keys → Create new key
+2. Add $5 credits (minimum for pay-as-you-go)
+
+#### ElevenLabs Setup
+1. Sign up (free tier sufficient for 100 sentences)
+2. Profile → API Key
+
+---
+
+### Step 2: Configure Environment (2 min)
+
+Create `.env` at project root (gitignored):
 
 ```bash
-# macOS/Linux
-./scripts/setup.sh        # First run: creates .env template
-# Fill in .env with real credentials (see Step 3 for where to get them)
-./scripts/setup.sh        # Second run: deploys everything
-python3 scripts/generate_voices.py
-./scripts/build.sh        # Build APK
-```
+# Required
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+SUPABASE_PROJECT_REF=xxxxx
 
-```cmd
-REM Windows
-scripts\setup.bat
-REM Fill in .env with real credentials (see Step 3 for where to get them)
-scripts\setup.bat
-python scripts\generate_voices.py
-scripts\build.bat
+# Optional (app works without these via offline fallback)
+AZURE_SPEECH_ENDPOINT=https://eastus.api.cognitive.microsoft.com
+AZURE_SPEECH_KEY=your-key
+OPENAI_API_KEY=sk-your-key
+ELEVENLABS_API_KEY=your-key
 ```
 
 ---
 
-## Manual Steps (if scripts don't work)
-
-## Prerequisites
-
-- [Supabase CLI](https://supabase.com/docs/guides/cli) installed
-- [Flutter SDK](https://flutter.dev/docs/get-started/install) (stable channel)
-- Python 3.8+ (for voice generation script)
-- Accounts: Supabase, Azure Speech, OpenAI, ElevenLabs (free tier)
-
----
-
-## Step 1: Create Supabase Project (10 min)
-
-1. Go to [supabase.com](https://supabase.com) → New Project
-2. Note down:
-   - **Project URL**: `https://xxxxx.supabase.co`
-   - **Anon Key**: (Settings → API → anon/public)
-   - **Service Role Key**: (Settings → API → service_role)
-
-3. Create Storage bucket:
-   - Storage → New Bucket → Name: `recordings` → Public: No
-
----
-
-## Step 2: Run Database Migrations (5 min)
+### Step 3: Deploy Database (5 min)
 
 ```bash
 cd supabase
 
 # Link to your project
-supabase link --project-ref YOUR_PROJECT_REF
+supabase link --project-ref $SUPABASE_PROJECT_REF
 
-# Run migrations in order
+# Push all migrations
 supabase db push
 ```
 
-This creates tables: `user_profiles`, `recordings`, `sentence_progress`, `daily_metrics`, `api_usage`, `events`.
+Creates tables:
+- `recordings` — user audio recordings (before/after)
+- `sentence_progress` — per-sentence accuracy tracking
+- `daily_metrics` — daily aggregated stats
+- `user_profiles` — placement results + level
+- `api_usage` — server-side quota tracking
+
+All tables have Row Level Security (RLS) — users can only access their own data.
 
 ---
 
-## Step 3: Setup API Keys (15 min)
-
-> Only Supabase is required. Other keys are optional — the app falls back to offline mode automatically.
-
-### Supabase (Required)
-- Needed for: auth, progress sync, recordings storage
-- Already have URL + Anon Key from Step 1
-
-### Azure Speech (Optional)
-- Needed for: phoneme-level pronunciation feedback
-- Without it: shadowing works but no accuracy scoring
-1. [Azure Portal](https://portal.azure.com) → Create "Speech Services" resource (Free F0 tier)
-2. Note: **Endpoint** and **Key 1**
-
-### OpenAI (Optional)
-- Needed for: AI conversation (GPT-4o-mini + Whisper + TTS)
-- Without it: conversation feature disabled, shadowing still works
-1. [platform.openai.com](https://platform.openai.com) → API Keys → Create
-2. Note: **API Key**
-
-### ElevenLabs (Optional)
-- Needed for: high-quality pre-generated shadowing audio
-- Without it: app uses offline Piper TTS (lower quality but works)
-1. [elevenlabs.io](https://elevenlabs.io) → Sign up (free tier: 10,000 chars/month)
-2. Profile → API Key
-3. Note: **API Key**
-
----
-
-## Step 4: Deploy Edge Functions (10 min)
+### Step 4: Deploy Edge Functions (5 min)
 
 ```bash
-# Set secrets
-supabase secrets set AZURE_SPEECH_ENDPOINT="https://YOUR_REGION.api.cognitive.microsoft.com"
-supabase secrets set AZURE_SPEECH_KEY="your-azure-key"
-supabase secrets set OPENAI_API_KEY="sk-your-openai-key"
-supabase secrets set ELEVENLABS_API_KEY="your-elevenlabs-key"
+# Set secrets for edge functions
+supabase secrets set \
+  AZURE_SPEECH_ENDPOINT="$AZURE_SPEECH_ENDPOINT" \
+  AZURE_SPEECH_KEY="$AZURE_SPEECH_KEY" \
+  OPENAI_API_KEY="$OPENAI_API_KEY"
 
-# Deploy all functions
+# Deploy all 4 functions
 supabase functions deploy pronounce
 supabase functions deploy transcribe
 supabase functions deploy chat
 supabase functions deploy tts
 ```
 
-Verify: `supabase functions list` should show 4 functions with status "Active".
+Verify: `supabase functions list` → 4 functions, status "Active".
+
+| Function | Purpose | External API |
+|----------|---------|-------------|
+| `/pronounce` | Pronunciation assessment | Azure Speech |
+| `/transcribe` | Speech-to-text | OpenAI Whisper |
+| `/chat` | AI conversation | OpenAI GPT-4o-mini |
+| `/tts` | Text-to-speech | OpenAI TTS |
 
 ---
 
-## Step 5: Generate Voice Files (30 min)
+### Step 5: Generate Shadowing Audio (10 min)
 
 ```bash
-# Install dependencies
+export ELEVENLABS_API_KEY="your-key"
 pip install elevenlabs
 
-# Set API key
-export ELEVENLABS_API_KEY="your-elevenlabs-key"
-
-# Generate audio for all 100 sentences
+# Generate MP3 for all 100 sentences
 python3 scripts/generate_voices.py
 
 # Update sentences.json with audio paths
 python3 scripts/update_sentences_audio_paths.py
 ```
 
-Output: `assets/voices/{sentence_id}.mp3` (100 files, ~50MB total)
+Output: `assets/voices/{sentence_id}.mp3` (100 files, ~50MB)
+
+> **Skip this step** if you don't have ElevenLabs. The app will use offline TTS as fallback (lower quality but functional).
 
 ---
 
-## Step 6: Configure Flutter App (5 min)
-
-The app reads Supabase credentials from compile-time environment variables:
+### Step 6: Build & Install APK (5 min)
 
 ```bash
-# Create .env file (gitignored)
-cat > .env << EOF
-SUPABASE_URL=https://xxxxx.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
-EOF
-```
-
-Build with env vars:
-
-```bash
+# Debug build (for testing)
 flutter run \
-  --dart-define=SUPABASE_URL=https://xxxxx.supabase.co \
-  --dart-define=SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
-```
+  --dart-define=SUPABASE_URL=$SUPABASE_URL \
+  --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
 
----
-
-## Step 7: Build APK (5 min)
-
-```bash
+# Release build
 flutter build apk --release \
-  --dart-define=SUPABASE_URL=https://xxxxx.supabase.co \
-  --dart-define=SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
+  --dart-define=SUPABASE_URL=$SUPABASE_URL \
+  --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
 ```
 
 Output: `build/app/outputs/flutter-apk/app-release.apk`
 
----
-
-## Step 8: Test on Device
-
-1. Install APK on Android phone
-2. Sign up with email/password
-3. Complete placement test (3 sentences)
-4. Do daily flow: 3 shadowing + 1 conversation
-5. Check progress dashboard
+Install: `adb install build/app/outputs/flutter-apk/app-release.apk`
 
 ---
 
-## Verify Checklist
+### Step 7: End-to-End Verification
 
-| Step | Verify |
-|------|--------|
-| Supabase | Can sign up/login from app |
-| Migrations | Tables visible in Supabase Dashboard → Table Editor |
-| Edge Functions | `curl -X POST https://xxx.supabase.co/functions/v1/pronounce` returns 401 (auth required) |
-| Azure Speech | Shadowing returns pronunciation scores |
-| OpenAI | Conversation AI responds |
-| ElevenLabs/TTS | AI voice plays in conversation |
-| Voice files | Shadowing plays reference audio |
-| Storage | Before/after recordings upload successfully |
-| Notifications | Daily reminder appears at 8 AM next day |
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Register with email/password | Account created, redirected to placement |
+| 2 | Complete placement (3 sentences) | Level assigned, redirected to onboarding |
+| 3 | Finish onboarding | Redirected to daily flow |
+| 4 | Shadowing: play reference audio | Audio plays at selected speed |
+| 5 | Shadowing: record & submit | Color-coded word feedback + scores |
+| 6 | Conversation: record response | AI responds with voice + text |
+| 7 | Complete daily flow | Summary screen with stats |
+| 8 | Progress screen | Shows mastery count, accuracy chart |
+| 9 | Turn on airplane mode | Offline banner shows, app still usable |
+| 10 | Settings: download offline models | sherpa_onnx models download (~70MB) |
 
 ---
 
 ## Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
-| "Supabase not initialized" | Check SUPABASE_URL and SUPABASE_ANON_KEY are passed via --dart-define |
-| Edge function 500 | Check `supabase functions logs pronounce` for missing env vars |
-| No audio in shadowing | Verify `assets/voices/` files exist and pubspec.yaml has `assets/voices/` entry |
-| Pronunciation always 0% | Azure endpoint region must match key region |
-| Conversation timeout | Check OpenAI API key has credits |
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| "Supabase not initialized" | Missing dart-define | Pass `SUPABASE_URL` and `SUPABASE_ANON_KEY` via `--dart-define` |
+| Edge function returns 500 | Missing secrets | `supabase secrets list` — verify all keys set |
+| No audio in shadowing | Voice files not generated | Run `scripts/generate_voices.py` or enable offline TTS |
+| Pronunciation always 0% | Azure region mismatch | Endpoint region must match key region |
+| Conversation timeout | OpenAI no credits | Add credits at platform.openai.com/account/billing |
+| "No providers available" | All quotas exceeded | Check Settings screen → quota usage |
+| Offline models not working | Models not downloaded | Settings → Download Models |
 
 ---
 
-## Cost Estimate (<10 DAU)
+## Cost Estimate
 
-| Service | Free Tier | Monthly Cost |
-|---------|-----------|-------------|
-| Supabase | 500MB DB, 1GB storage, 500K edge invocations | $0 |
-| Azure Speech | 500K chars/month | $0 |
-| OpenAI (Whisper + GPT + TTS) | — | ~$12 |
-| ElevenLabs | 10K chars/month (pre-generated only) | $0 |
-| **Total** | | **~$12/month** |
+### <10 DAU (Personal/Testing)
+
+| Service | Monthly Cost |
+|---------|-------------|
+| Supabase | $0 (free tier) |
+| Azure Speech | $0 (free tier: 5hr/month) |
+| OpenAI | ~$12 (Whisper $0.006/min + GPT $0.15/1M tokens + TTS $15/1M chars) |
+| ElevenLabs | $0 (one-time pre-generation) |
+| **Total** | **~$12/month** |
+
+### 50 DAU (Beta)
+
+| Service | Monthly Cost |
+|---------|-------------|
+| Supabase | $0 (free tier still sufficient) |
+| Azure Speech | $0 (free tier: ~2,500 assessments/month) |
+| OpenAI | ~$60 |
+| **Total** | **~$60/month** |
+
+---
+
+## Production Checklist (Before Beta)
+
+- [ ] Enable email confirmation in Supabase Auth settings
+- [ ] Set rate limits on Edge Functions (Supabase dashboard)
+- [ ] Enable Supabase database backups (daily, free tier)
+- [ ] Set up error alerting (Supabase logs → webhook/email)
+- [ ] Test on 3+ Android devices (different screen sizes)
+- [ ] Add Firebase Crashlytics (optional, for crash reporting)
+- [ ] Configure ProGuard rules for release build
+- [ ] Test full flow with slow network (3G simulation)

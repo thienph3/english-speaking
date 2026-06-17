@@ -28,6 +28,7 @@ Done.
 | [Product Concept](docs/product-concept.md) | 3 pillars, user flow, situation-based content |
 | [Technical Analysis](docs/technical-analysis.md) | Architecture, APIs, scoring, error handling |
 | [Roadmap](docs/roadmap.md) | MVP scope, timeline, content format |
+| [Deployment Guide](docs/deployment.md) | Step-by-step deploy: accounts, backend, APK build |
 
 ## Tech Stack
 
@@ -55,6 +56,7 @@ Done.
 - [x] Build daily flow (sentence selection + persistence)
 - [x] AI Service Orchestrator (online/offline fallback, quota tracking)
 - [x] Offline TTS/STT (sherpa_onnx + model download UI)
+- [x] Tests (184 passing — state machines, routing, orchestrator, widgets)
 - [ ] Setup accounts (Supabase, Azure, OpenAI, ElevenLabs)
 - [ ] Generate voice files (ElevenLabs TTS for shadowing)
 - [ ] Deploy Edge Functions + run migrations
