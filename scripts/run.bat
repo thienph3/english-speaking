@@ -1,5 +1,5 @@
 @echo off
-REM SpeakEng — Run in debug mode (Windows)
+REM SpeakEng - Run in debug mode (Windows)
 REM Usage: scripts\run.bat
 
 set "ENV_FILE=%~dp0..\.env"
