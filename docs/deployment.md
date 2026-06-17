@@ -36,8 +36,8 @@ Supabase Edge Functions (4)
 # 4. Run setup again to deploy
 ./scripts/setup.sh        # Deploys migrations + edge functions
 
-# 5. Generate voice files
-pip install elevenlabs
+# 5. Generate voice files (free, no API key needed)
+pip install edge-tts
 python3 scripts/generate_voices.py
 
 # 6. Build APK
@@ -55,11 +55,9 @@ python3 scripts/generate_voices.py
 | [Supabase](https://supabase.com) | Auth, DB, Storage, Edge Functions | 500MB DB, 1GB storage | **Yes** |
 | [Azure Speech](https://portal.azure.com) | Phoneme-level pronunciation scoring | 5 hours/month | Optional* |
 | [OpenAI](https://platform.openai.com) | Whisper STT + GPT-4o-mini + TTS | Pay-as-you-go | Optional* |
-| [ElevenLabs](https://elevenlabs.io) | Pre-generate shadowing audio | 10,000 chars/month | Optional* |
 
 *Without Azure: shadowing works but no accuracy scoring.
 *Without OpenAI: conversation feature disabled, shadowing still works.
-*Without ElevenLabs: app uses offline Piper TTS for reference audio.
 
 #### Supabase Setup
 1. New Project → note **Project URL** and **Anon Key** (Settings → API)
@@ -75,10 +73,6 @@ python3 scripts/generate_voices.py
 #### OpenAI Setup
 1. platform.openai.com → API Keys → Create new key
 2. Add $5 credits (minimum for pay-as-you-go)
-
-#### ElevenLabs Setup
-1. Sign up (free tier sufficient for 100 sentences)
-2. Profile → API Key
 
 ---
 
@@ -97,7 +91,6 @@ SUPABASE_PROJECT_REF=xxxxx
 AZURE_SPEECH_ENDPOINT=https://eastus.api.cognitive.microsoft.com
 AZURE_SPEECH_KEY=your-key
 OPENAI_API_KEY=sk-your-key
-ELEVENLABS_API_KEY=your-key
 ```
 
 ---
@@ -154,9 +147,10 @@ Verify: `supabase functions list` → 4 functions, status "Active".
 
 ### Step 5: Generate Shadowing Audio (10 min)
 
+Uses `edge-tts` (Microsoft Edge's free TTS service — no account or API key needed):
+
 ```bash
-export ELEVENLABS_API_KEY="your-key"
-pip install elevenlabs
+pip install edge-tts
 
 # Generate MP3 for all 100 sentences
 python3 scripts/generate_voices.py
@@ -166,8 +160,6 @@ python3 scripts/update_sentences_audio_paths.py
 ```
 
 Output: `assets/voices/{sentence_id}.mp3` (100 files, ~50MB)
-
-> **Skip this step** if you don't have ElevenLabs. The app will use offline TTS as fallback (lower quality but functional).
 
 ---
 
@@ -231,7 +223,7 @@ Install: `adb install build/app/outputs/flutter-apk/app-release.apk`
 | Supabase | $0 (free tier) |
 | Azure Speech | $0 (free tier: 5hr/month) |
 | OpenAI | ~$12 (Whisper $0.006/min + GPT $0.15/1M tokens + TTS $15/1M chars) |
-| ElevenLabs | $0 (one-time pre-generation) |
+| edge-tts | $0 (free, no account needed) |
 | **Total** | **~$12/month** |
 
 ### 50 DAU (Beta)

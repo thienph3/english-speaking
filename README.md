@@ -39,10 +39,9 @@ Done.
 | Pronunciation | Azure Speech Pronunciation Assessment (phoneme-level) |
 | STT | OpenAI Whisper API (online) / sherpa_onnx Whisper tiny (offline) |
 | TTS | OpenAI TTS (online) / sherpa_onnx Piper VITS (offline) |
-| AI Conversation | GPT-4o-mini |
 | Offline Engine | sherpa_onnx 1.13.2 (on-device TTS/STT) |
 | State | Riverpod + freezed |
-| Cost (<10 DAU) | ~$16/month |
+| Cost (<10 DAU) | ~$12/month |
 
 ## Status
 
@@ -57,7 +56,7 @@ Done.
 - [x] AI Service Orchestrator (online/offline fallback, quota tracking)
 - [x] Offline TTS/STT (sherpa_onnx + model download UI)
 - [x] Tests (184 passing — state machines, routing, orchestrator, widgets)
-- [ ] Setup accounts (Supabase, Azure, OpenAI, ElevenLabs)
-- [ ] Generate voice files (ElevenLabs TTS for shadowing)
+- [ ] Setup accounts (Supabase, Azure, OpenAI)
+- [ ] Generate voice files (edge-tts for shadowing)
 - [ ] Deploy Edge Functions + run migrations
 - [ ] Beta testing (50 users)
