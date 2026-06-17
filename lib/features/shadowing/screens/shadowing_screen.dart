@@ -10,6 +10,7 @@ import 'package:speakeng/features/shadowing/widgets/phoneme_tip_card.dart';
 import 'package:speakeng/features/shadowing/widgets/phrase_practice_view.dart';
 import 'package:speakeng/features/shadowing/widgets/shadowing_bottom_actions.dart';
 import 'package:speakeng/features/shadowing/widgets/shadowing_widgets.dart';
+import 'package:speakeng/shared/services/content_service.dart';
 
 /// Màn hình Shadowing: play audio → record → gửi → hiển thị kết quả.
 ///
@@ -23,6 +24,11 @@ class ShadowingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(shadowingProvider);
     final phraseState = ref.watch(phraseModeProvider);
+
+    // Load sentence on first build if still initial
+    if (state is ShadowingInitial) {
+      _loadSentence(ref);
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -114,5 +120,14 @@ class ShadowingScreen extends ConsumerWidget {
       ShadowingResult(:final sentence) => sentence.situation,
       _ => null,
     };
+  }
+
+  Future<void> _loadSentence(WidgetRef ref) async {
+    final contentService = ContentService();
+    final sentences = await contentService.getAllSentences();
+    final match = sentences.where((s) => s.id == sentenceId).firstOrNull;
+    if (match != null) {
+      ref.read(shadowingProvider.notifier).loadSentence(match);
+    }
   }
 }
