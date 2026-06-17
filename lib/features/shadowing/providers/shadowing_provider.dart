@@ -108,6 +108,8 @@ class ShadowingNotifier extends StateNotifier<ShadowingState> {
       state = ShadowingState.result(sentence, result);
     } on AppError catch (error) {
       state = ShadowingState.error(error);
+    } catch (_) {
+      state = ShadowingState.error(const ApiTimeoutError());
     }
   }
 
