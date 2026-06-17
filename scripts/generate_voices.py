@@ -80,7 +80,7 @@ def generate_voice(text: str, output_path: Path, api_key: str) -> bool:
 
     payload = {
         "text": text,
-        "model_id": "eleven_multilingual_v2",
+        "model_id": "eleven_flash_v2_5",
         "voice_settings": TTS_SETTINGS,
     }
 
