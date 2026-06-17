@@ -1,9 +1,8 @@
 @echo off
 REM SpeakEng - Run in debug mode (Windows)
-REM Usage: scripts\run.bat
 
 set "ENV_FILE=%~dp0..\.env"
-if not exist "%ENV_FILE%" (echo ❌ .env not found. Run scripts\setup.bat first. & exit /b 1)
+if not exist "%ENV_FILE%" (echo .env not found. Run scripts\setup.bat first. & exit /b 1)
 
 for /f "usebackq tokens=1,* delims==" %%a in ("%ENV_FILE%") do set "%%a=%%b"
 
