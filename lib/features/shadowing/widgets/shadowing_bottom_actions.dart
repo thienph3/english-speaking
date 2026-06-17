@@ -13,6 +13,9 @@ import 'package:speakeng/features/shadowing/widgets/phrase_mode_toggle.dart';
 import 'package:speakeng/features/shadowing/widgets/shadowing_widgets.dart';
 import 'package:speakeng/shared/widgets/recording_button.dart';
 
+/// Tracks the current recording file path.
+String? _currentRecordingPath;
+
 /// Bottom actions cho shadowing screen: phrase toggle + play/retry + record.
 class ShadowingBottomActions extends ConsumerWidget {
   const ShadowingBottomActions({super.key});
@@ -81,8 +84,6 @@ class ShadowingBottomActions extends ConsumerWidget {
       _ => RecordingButtonState.disabled,
     };
   }
-
-  String? _currentRecordingPath;
 
   void _onRecordPressed(
     WidgetRef ref,
