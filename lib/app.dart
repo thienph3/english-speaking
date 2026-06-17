@@ -45,12 +45,17 @@ class SpeakEngApp extends ConsumerWidget {
 
   /// Kiểm tra trạng thái placement khi user đăng nhập.
   Future<void> _checkPlacement(WidgetRef ref) async {
+    // Skip placement if Azure Speech is not configured
+    const azureKey = String.fromEnvironment('AZURE_SPEECH_KEY');
+    if (azureKey.isEmpty) {
+      ref.read(placementCompletedProvider.notifier).state = true;
+      return;
+    }
     try {
       final repo = ref.read(placementRepositoryProvider);
       final completed = await repo.hasCompletedPlacement();
       ref.read(placementCompletedProvider.notifier).state = completed;
     } on Exception {
-      // Nếu lỗi, mặc định cho phép vào app
       ref.read(placementCompletedProvider.notifier).state = true;
     }
   }
