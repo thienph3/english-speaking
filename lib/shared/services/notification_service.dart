@@ -25,11 +25,11 @@ class NotificationService {
     );
 
     await _plugin.periodicallyShow(
-      0,
-      'SpeakEng',
-      '5 phút luyện nói hôm nay! 🎤',
-      RepeatInterval.daily,
-      details,
+      id: 0,
+      title: 'SpeakEng',
+      body: '5 phút luyện nói hôm nay! 🎤',
+      repeatInterval: RepeatInterval.daily,
+      notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
     );
   }
