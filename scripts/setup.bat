@@ -37,10 +37,12 @@ if "%SUPABASE_URL%"=="https://xxxxx.supabase.co" (echo ❌ SUPABASE_URL not set 
 
 echo ✅ All credentials loaded
 
+REM Run all supabase commands from project root
+cd /d "%~dp0.."
+
 REM Step 1: Link Supabase
 echo.
 echo 📦 Step 1/4: Linking Supabase project...
-cd /d "%~dp0..\supabase"
 supabase link --project-ref %SUPABASE_PROJECT_REF% 2>nul
 
 REM Step 2: Push migrations
@@ -57,7 +59,6 @@ supabase functions deploy tts
 
 REM Step 4: Flutter deps
 echo 📦 Step 4/4: Getting Flutter dependencies...
-cd /d "%~dp0.."
 flutter pub get
 
 echo.

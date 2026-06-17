@@ -51,10 +51,12 @@ echo "✅ Required credentials loaded"
 [ -n "$AZURE_SPEECH_KEY" ] && echo "   ✓ Azure Speech (pronunciation)" || echo "   ⚠ Azure not set (pronunciation disabled)"
 [ -n "$ELEVENLABS_API_KEY" ] && echo "   ✓ ElevenLabs (voice generation)" || echo "   ⚠ ElevenLabs not set (use offline TTS)"
 
+# All supabase commands run from project root
+cd "$(dirname "$0")/.."
+
 # Step 1: Link Supabase
 echo ""
 echo "📦 Step 1/4: Linking Supabase project..."
-cd "$(dirname "$0")/../supabase"
 supabase link --project-ref "$SUPABASE_PROJECT_REF" 2>/dev/null || true
 
 # Step 2: Push migrations
@@ -79,7 +81,6 @@ fi
 
 # Step 4: Flutter deps
 echo "📦 Step 4/4: Getting Flutter dependencies..."
-cd "$(dirname "$0")/.."
 flutter pub get
 
 echo ""
